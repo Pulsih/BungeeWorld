@@ -1,0 +1,8 @@
+ServerSelector:
+  displayname: "&a&lSERVER SELECTOR"
+  material: "COMPASS"
+  lore:
+    - "&7Right-Click to select a server."
+  glowing: true
+  actions:
+    - "[OPEN_GUI] ServerSelector"

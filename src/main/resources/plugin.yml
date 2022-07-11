@@ -1,0 +1,11 @@
+name: BungeeWorld
+version: '${version}'
+main: me.pulsi_.bungeeworld.BungeeWorld
+api-version: 1.13
+load: STARTUP
+authors: [ Pulsi_ ]
+commands:
+  bungeeworld:
+    aliases: bw
+  hub:
+  spawn:
