@@ -30,7 +30,7 @@ ExampleWorld:
       - "/this-command-must-not-be-executed"
   actions-on-join:
     # You can see a list of all custom actions here:
-    #
+    # https://github.com/Pulsih/BungeeWorld/blob/main/README.md
     - "[GIVE_CUSTOM_ITEM] %player% ServerSelector 5 true"
   actions-on-death:
     - "[BROADCAST] %player% died."
