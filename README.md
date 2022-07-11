@@ -3,7 +3,7 @@
 
 # worlds.yml
 Default world settings:
-
+```
 ExampleWorld:  
   spawn: null 
   chat: "&7%player%&8: &7%message%" 
@@ -39,3 +39,4 @@ ExampleWorld:
   death-message: "&a%player% &fdied." 
   join-message: null # Use "null" to remove the message. 
   quit-message: null 
+```
