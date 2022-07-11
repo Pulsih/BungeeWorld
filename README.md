@@ -1,8 +1,6 @@
-# BungeeWorld
-
-
 # worlds.yml
-Default world settings:
+
+Default worlds file:
 ```yaml
 ExampleWorld:
   spawn: null
