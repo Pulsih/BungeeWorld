@@ -1,5 +1,6 @@
 package me.pulsi_.bungeeworld.actions;
 
+import me.pulsi_.bungeeworld.managers.GuiManager;
 import me.pulsi_.bungeeworld.managers.ItemManager;
 import me.pulsi_.bungeeworld.utils.BWChat;
 import me.pulsi_.bungeeworld.utils.BWLogger;
@@ -24,7 +25,14 @@ public class ActionProcessor {
             if (giveCustomItem(action)) continue;
             if (giveEffects(p, action)) continue;
             if (broadcast(p, action)) continue;
+            openGui(p, action);
         }
+    }
+
+    private static boolean openGui(Player p, String action) {
+        if (!action.startsWith("[OPEN_GUI]")) return false;
+        new GuiManager().openGui(p, action.replace("[OPEN_GUI] ", ""));
+        return true;
     }
 
     private static boolean giveEffects(Player p, String action) {

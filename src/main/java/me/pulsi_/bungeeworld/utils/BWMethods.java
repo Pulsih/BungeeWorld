@@ -1,8 +1,10 @@
 package me.pulsi_.bungeeworld.utils;
 
+import me.pulsi_.bungeeworld.managers.MessagesManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class BWMethods {
@@ -14,6 +16,7 @@ public class BWMethods {
     }
 
     public static Location getLocation(String path) {
+        if (path == null) return null;
         String[] s = path.split(" ");
         Location loc;
         try {
@@ -40,6 +43,32 @@ public class BWMethods {
         } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
             BWLogger.error("\"" + soundString + "\" Is an invalid sound type!");
         }
+    }
+
+    public static void sendTitle(Player p, String titleString) {
+        titleString = titleString.replace("%player%", p.getName());
+        if (titleString.contains(",")) {
+            String[] parts = titleString.split(",");
+            String title = parts[0];
+            String subtitle = parts[1];
+            p.sendTitle(BWChat.color(title), BWChat.color(subtitle));
+        } else p.sendTitle(BWChat.color(titleString), "");
+    }
+
+    public static boolean hasPermissions(CommandSender s, String permission) {
+        if (!s.hasPermission(permission)) {
+            MessagesManager.send(s, "no_permission");
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isPlayer(CommandSender s) {
+        if (!(s instanceof Player)) {
+            MessagesManager.send(s, "not_player");
+            return false;
+        }
+        return true;
     }
 
     public static boolean isValidNumber(String number) {

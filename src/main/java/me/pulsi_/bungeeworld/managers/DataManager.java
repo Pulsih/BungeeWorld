@@ -4,7 +4,10 @@ import me.pulsi_.bungeeworld.BungeeWorld;
 import me.pulsi_.bungeeworld.commands.HubCmd;
 import me.pulsi_.bungeeworld.commands.MainCmd;
 import me.pulsi_.bungeeworld.commands.SpawnCmd;
+import me.pulsi_.bungeeworld.external.UpdateChecker;
+import me.pulsi_.bungeeworld.external.bStats;
 import me.pulsi_.bungeeworld.listeners.*;
+import me.pulsi_.bungeeworld.utils.BWLogger;
 import me.pulsi_.bungeeworld.values.Values;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -13,8 +16,27 @@ import org.bukkit.plugin.PluginManager;
 public class DataManager {
 
     public static void setupPlugin() {
-        registerCommands();
+        long startTime = System.currentTimeMillis();
+        long time;
+
+        BWLogger.log("");
+        BWLogger.log("    &2&lBungee&a&lWorld &2Enabling plugin...");
+        BWLogger.log("    &aRunning on version &f" + BungeeWorld.getInstance().getDescription().getVersion() + "&a!");
+
+        time = System.currentTimeMillis();
+        new bStats(BungeeWorld.getInstance());
+        BungeeWorld.getInstance().getConfigs().createConfigs();
+        BWLogger.log("    &aLoaded config files! &8(&3" + (System.currentTimeMillis() - time) + "ms&8)");
+
+        time = System.currentTimeMillis();
         registerEvents();
+        BWLogger.log("    &aRegistered events! &8(&3" + (System.currentTimeMillis() - time) + "ms&8)");
+
+        time = System.currentTimeMillis();
+        registerCommands();
+        BWLogger.log("    &aLoaded plugin commands! &8(&3" + (System.currentTimeMillis() - time) + "ms&8)");
+        BWLogger.log("    &aDone! &8(&3" + (System.currentTimeMillis() - startTime) + " total ms&8)");
+        BWLogger.log("");
     }
 
     public static void reloadConfigs() {
@@ -29,6 +51,7 @@ public class DataManager {
         MessagesManager.loadMessages();
         ItemManager.loadItems();
         WorldManager.loadWorldsValues();
+        new GuiManager().loadGuis();
         for (World world : Bukkit.getWorlds()) WorldManager.registerWorld(world);
     }
 
@@ -50,6 +73,8 @@ public class DataManager {
         pluginManager.registerEvents(new DamageListener(), plugin);
         pluginManager.registerEvents(new EntityDamageListener(), plugin);
         pluginManager.registerEvents(new EntitySpawnListener(), plugin);
+        pluginManager.registerEvents(new ExplosionListener(), plugin);
+        pluginManager.registerEvents(new GuiListener(), plugin);
         pluginManager.registerEvents(new PlayerChatListener(), plugin);
         pluginManager.registerEvents(new PlayerDropListener(), plugin);
         pluginManager.registerEvents(new PlayerInteractListener(), plugin);
@@ -58,5 +83,6 @@ public class DataManager {
         pluginManager.registerEvents(new PlayerQuitListener(), plugin);
         pluginManager.registerEvents(new PlayerRespawnListener(), plugin);
         pluginManager.registerEvents(new WorldChangeListener(), plugin);
+        pluginManager.registerEvents(new UpdateChecker(plugin), plugin);
     }
 }

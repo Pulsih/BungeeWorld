@@ -1,14 +1,13 @@
 package me.pulsi_.bungeeworld.commands;
 
 import me.pulsi_.bungeeworld.BungeeWorld;
-import me.pulsi_.bungeeworld.managers.ItemManager;
-import me.pulsi_.bungeeworld.managers.ConfigManager;
-import me.pulsi_.bungeeworld.managers.DataManager;
-import me.pulsi_.bungeeworld.managers.MessagesManager;
+import me.pulsi_.bungeeworld.managers.*;
 import me.pulsi_.bungeeworld.utils.BWChat;
 import me.pulsi_.bungeeworld.utils.BWMethods;
 import me.pulsi_.bungeeworld.values.Values;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,6 +34,8 @@ public class MainCmd implements CommandExecutor, TabCompleter {
 
         switch (args[0]) {
             case "give": {
+                if (!BWMethods.hasPermissions(s, "bungeeworld.give")) return false;
+
                 if (args.length == 1) {
                     MessagesManager.send(s, "specify_player");
                     return false;
@@ -86,11 +87,61 @@ public class MainCmd implements CommandExecutor, TabCompleter {
             }
             break;
 
-            case "sethub": {
-                if (!(s instanceof Player)) {
-                    MessagesManager.send(s, "not_player");
+            case "send": {
+                if (!BWMethods.hasPermissions(s, "bungeeworld.send")) return false;
+
+                if (args.length == 1) {
+                    MessagesManager.send(s, "specify_player");
                     return false;
                 }
+                Player target = Bukkit.getPlayerExact(args[1]);
+                if (target == null) {
+                    MessagesManager.send(s, "invalid_player");
+                    return false;
+                }
+
+                if (args.length == 2) {
+                    MessagesManager.send(s, "specify_world");
+                    return false;
+                }
+                World world = Bukkit.getWorld(args[2]);
+                if (world == null) {
+                    MessagesManager.send(s, "invalid_world");
+                    return false;
+                }
+
+                Location spawn = BWMethods.getLocation(WorldManager.getSpawn(world));
+                if (spawn != null) target.teleport(spawn);
+                else target.teleport(world.getSpawnLocation());
+
+                MessagesManager.send(s, "player_sent", "%player%$" + target.getName(), "%world%$" + world.getName());
+            }
+            break;
+
+            case "tp": {
+                if (!BWMethods.hasPermissions(s, "bungeeworld.tp") || !BWMethods.isPlayer(s)) return false;
+                Player p = (Player) s;
+
+                if (args.length == 1) {
+                    MessagesManager.send(s, "specify_world");
+                    return false;
+                }
+                World world = Bukkit.getWorld(args[1]);
+                if (world == null) {
+                    MessagesManager.send(s, "invalid_world");
+                    return false;
+                }
+
+                Location spawn = BWMethods.getLocation(WorldManager.getSpawn(world));
+                if (spawn != null) p.teleport(spawn);
+                else p.teleport(world.getSpawnLocation());
+
+                MessagesManager.send(s, "player_tp", "%world%$" + world.getName());
+            }
+            break;
+
+            case "sethub": {
+                if (!BWMethods.hasPermissions(s, "bungeeworld.sethub") || !BWMethods.isPlayer(s)) return false;
                 Player p = (Player) s;
 
                 ConfigManager configManager = BungeeWorld.getInstance().getConfigs();
@@ -108,10 +159,7 @@ public class MainCmd implements CommandExecutor, TabCompleter {
             break;
 
             case "setspawn": {
-                if (!(s instanceof Player)) {
-                    MessagesManager.send(s, "not_player");
-                    return false;
-                }
+                if (!BWMethods.hasPermissions(s, "bungeeworld.setspawn") || !BWMethods.isPlayer(s)) return false;
                 Player p = (Player) s;
 
                 ConfigManager configManager = BungeeWorld.getInstance().getConfigs();
@@ -125,6 +173,7 @@ public class MainCmd implements CommandExecutor, TabCompleter {
             break;
 
             case "reload": {
+                if (!BWMethods.hasPermissions(s, "bungeeworld.setspawn")) return false;
                 DataManager.reloadConfigs();
                 MessagesManager.send(s, "plugin_reloaded");
             }
@@ -142,8 +191,10 @@ public class MainCmd implements CommandExecutor, TabCompleter {
                 List<String> listOfArgs = new ArrayList<>();
                 if (s.hasPermission("bungeeworld.give")) listOfArgs.add("give");
                 if (s.hasPermission("bungeeworld.reload")) listOfArgs.add("reload");
+                if (s.hasPermission("bungeeworld.send")) listOfArgs.add("send");
                 if (s.hasPermission("bungeeworld.sethub")) listOfArgs.add("sethub");
                 if (s.hasPermission("bungeeworld.setspawn")) listOfArgs.add("setspawn");
+                if (s.hasPermission("bungeeworld.tp")) listOfArgs.add("tp");
 
                 for (String arg : listOfArgs) if (arg.startsWith(args[0].toLowerCase())) args1.add(arg);
                 return args1;
@@ -161,6 +212,26 @@ public class MainCmd implements CommandExecutor, TabCompleter {
                             if (arg.toLowerCase().startsWith(args[1].toLowerCase())) args2.add(arg);
                         return args2;
                     }
+                    case "send": {
+                        if (!s.hasPermission("bungeeworld.send")) return null;
+                        List<String> args2 = new ArrayList<>();
+                        List<String> listOfArgs = new ArrayList<>();
+                        Bukkit.getOnlinePlayers().forEach(p -> listOfArgs.add(p.getName()));
+
+                        for (String arg : listOfArgs)
+                            if (arg.toLowerCase().startsWith(args[1].toLowerCase())) args2.add(arg);
+                        return args2;
+                    }
+                    case "tp": {
+                        if (!s.hasPermission("bungeeworld.tp")) return null;
+                        List<String> args2 = new ArrayList<>();
+                        List<String> listOfArgs = new ArrayList<>();
+                        Bukkit.getWorlds().forEach(world -> listOfArgs.add(world.getName()));
+
+                        for (String arg : listOfArgs)
+                            if (arg.toLowerCase().startsWith(args[1].toLowerCase())) args2.add(arg);
+                        return args2;
+                    }
                 }
             }
 
@@ -170,6 +241,16 @@ public class MainCmd implements CommandExecutor, TabCompleter {
                         if (!s.hasPermission("bungeeworld.give")) return null;
                         List<String> args3 = new ArrayList<>();
                         for (String arg : ItemManager.itemsName)
+                            if (arg.toLowerCase().startsWith(args[2].toLowerCase())) args3.add(arg);
+                        return args3;
+                    }
+                    case "send": {
+                        if (!s.hasPermission("bungeeworld.send")) return null;
+                        List<String> args3 = new ArrayList<>();
+                        List<String> listOfArgs = new ArrayList<>();
+                        Bukkit.getWorlds().forEach(world -> listOfArgs.add(world.getName()));
+
+                        for (String arg : listOfArgs)
                             if (arg.toLowerCase().startsWith(args[2].toLowerCase())) args3.add(arg);
                         return args3;
                     }

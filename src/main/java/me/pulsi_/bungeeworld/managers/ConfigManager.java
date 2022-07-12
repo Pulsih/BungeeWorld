@@ -68,6 +68,7 @@ public class ConfigManager {
         MessagesManager.loadMessages();
         ItemManager.loadItems();
         WorldManager.loadWorldsValues();
+        new GuiManager().loadGuis();
     }
 
     public FileConfiguration getConfig(Type type) {
@@ -216,12 +217,21 @@ public class ConfigManager {
         validatePath(config, newConfig, "join-settings.title.send", true);
         addCommentsUnder(newConfig, "join-settings.title", "Use the , to separate title from subtitle.");
         validatePath(config, newConfig, "join-settings.title.text", "&2&lWelcome!,&7Have fun &a&n%player%&7!");
+        addSpace(newConfig, "join-settings");
+
+        addCommentsUnder(newConfig, "join-settings", "Play a sound then the player joins.");
+        validatePath(config, newConfig, "join-settings.sound.play", true);
+        validatePath(config, newConfig, "join-settings.sound.sound-type", "ENTITY_PLAYER_LEVELUP 5 1");
         addSpace(newConfig);
 
         addCommentsUnder(newConfig, "server-settings",
                 "Choose if the chat is divided world-by-world",
                 "or just use the normal server chat.");
         validatePath(config, newConfig, "server-settings.isolate-chat", true);
+        addCommentsUnder(newConfig, "server-settings",
+                "This will separate inventory, effects",
+                "and gamemode between worlds.");
+        validatePath(config, newConfig, "server-settings.isolate-inventories", true);
         addSpace(newConfig);
 
         addCommentsUnder(newConfig, "default-formats", "The default values that a new registered world will have");
@@ -275,6 +285,8 @@ public class ConfigManager {
         validatePath(messagesConfig, newMessages, "teleported_hub", "%prefix% &aYou have been teleported to the hub!");
         validatePath(messagesConfig, newMessages, "teleported_spawn", "%prefix% &aYou have been teleported to the spawn!");
         validatePath(messagesConfig, newMessages, "item_given", "%prefix% &aSuccessfully given %item% to %player%!");
+        validatePath(messagesConfig, newMessages, "player_sent", "%prefix% &aSuccessfully sent %player% to %world%!");
+        validatePath(messagesConfig, newMessages, "player_tp", "%prefix% &aTeleported to %world%!");
         addSpace(newMessages);
 
         addComments(newMessages, "Plugin Errors.");
@@ -289,6 +301,9 @@ public class ConfigManager {
         validatePath(messagesConfig, newMessages, "specify_item", "%prefix% &cPlease specify an item!");
         validatePath(messagesConfig, newMessages, "invalid_item", "%prefix% &cPlease choose a valid item!");
         validatePath(messagesConfig, newMessages, "invalid_number", "%prefix% &cPlease choose a valid number!");
+        validatePath(messagesConfig, newMessages, "specify_world", "%prefix% &cPlease specify a world!");
+        validatePath(messagesConfig, newMessages, "invalid_world", "%prefix% &cPlease choose a valid world!");
+        validatePath(messagesConfig, newMessages, "invalid_gui", "%prefix% &cPlease choose a valid gui!");
         addSpace(newMessages);
 
         saveConfig(newMessages, newMessagesFile, false);

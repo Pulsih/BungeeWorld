@@ -13,11 +13,10 @@ public class HubCmd implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender s, Command command, String label, String[] args) {
-        if (!(s instanceof Player)) {
-            MessagesManager.send(s, "not_player");
-            return false;
-        }
+        if (!BWMethods.isPlayer(s)) return false;
         Player p = (Player) s;
+
+        if (!BWMethods.hasPermissions(p, "bungeeworld.hub")) return false;
 
         if (p.getWorld().getName().equals(Values.CONFIG.getHubName())) {
             MessagesManager.send(p, "already_at_hub");

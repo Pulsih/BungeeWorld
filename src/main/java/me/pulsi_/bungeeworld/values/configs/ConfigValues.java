@@ -7,8 +7,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class ConfigValues {
 
     private String hubName, hubSpawn, hubTeleportSound, defaultChatFormat, securityDenyMessage, commandsDenyMessage, deathMessage, joinMessage, quitMessage;
+    private String joinTitle, joinSound;
+    private boolean joinSendTitle, joinPlaySound;
     private boolean disableBlockPlace, disableBlockBreak, disableMobSpawn, disableExplosion, disableActions, disableDrops, disablePickup, disableFall, disablePvP;
-    private boolean teleportHubWhenJoin, isolateChat;
+    private boolean updateChecker, teleportHubWhenJoin, isolateChat, isolateInventories;
 
     public void loadValues() {
         FileConfiguration config = BungeeWorld.getInstance().getConfigs().getConfig(ConfigManager.Type.CONFIG);
@@ -22,8 +24,14 @@ public class ConfigValues {
         deathMessage = config.getString("default-formats.death-message");
         joinMessage = config.getString("default-formats.join-message");
         quitMessage = config.getString("default-formats.quit-message");
+        joinTitle = config.getString("join-settings.title.text");
+        joinSendTitle = config.getBoolean("join-settings.title.send");
+        joinSound = config.getString("join-settings.sound.sound-type");
+        joinPlaySound = config.getBoolean("join-settings.sound.play");
+        updateChecker = config.getBoolean("update-checker");
         teleportHubWhenJoin = config.getBoolean("hub.teleport-when-join");
         isolateChat = config.getBoolean("server-settings.isolate-chat");
+        isolateInventories = config.getBoolean("server-settings.isolate-inventories");
         disableBlockPlace = config.getBoolean("default-formats.disable-block-place");
         disableBlockBreak = config.getBoolean("default-formats.disable-block-break");
         disableMobSpawn = config.getBoolean("default-formats.disable-mob-spawning");
@@ -71,12 +79,36 @@ public class ConfigValues {
         return quitMessage;
     }
 
+    public String getJoinTitle() {
+        return joinTitle;
+    }
+
+    public boolean isJoinSendTitle() {
+        return joinSendTitle;
+    }
+
+    public String getJoinSound() {
+        return joinSound;
+    }
+
+    public boolean isJoinPlaySound() {
+        return joinPlaySound;
+    }
+
+    public boolean isUpdateChecker() {
+        return updateChecker;
+    }
+
     public boolean isTeleportHubWhenJoin() {
         return teleportHubWhenJoin;
     }
 
     public boolean isIsolateChat() {
         return isolateChat;
+    }
+
+    public boolean isIsolateInventories() {
+        return isolateInventories;
     }
 
     public boolean isDisableBlockPlace() {

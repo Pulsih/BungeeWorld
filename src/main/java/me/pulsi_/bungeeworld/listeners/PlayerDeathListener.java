@@ -20,7 +20,7 @@ public class PlayerDeathListener implements Listener {
 
         String deathMessage = WorldManager.getDeathMessage(p);
         if (deathMessage == null || deathMessage.equals("null")) return;
-        String message = BWChat.color(deathMessage.replace("%player%", ""));
+        String message = BWChat.color(deathMessage.replace("%player%", p.getName()));
         if (Values.CONFIG.isIsolateChat()) {
             for (Player player : p.getWorld().getPlayers()) player.sendMessage(message);
         }

@@ -10,7 +10,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public class WorldManager {
 
@@ -143,8 +146,15 @@ public class WorldManager {
     }
 
     public static boolean canExplode(String worldName) {
-        FileConfiguration worlds = BungeeWorld.getInstance().getConfigs().getConfig(ConfigManager.Type.WORLDS);
-        return !worlds.getBoolean(worldName + ".security.disable-explosions");
+        String path = worldName + ".security.disable-explosions";
+        if (!worldObjects.containsKey(path)) return true;
+        return !(boolean) worldObjects.get(path);
+    }
+
+    public static boolean canExplode(Entity e) {
+        String path = e.getWorld().getName() + ".security.disable-explosions";
+        if (!worldObjects.containsKey(path)) return true;
+        return !(boolean) worldObjects.get(path);
     }
 
     public static boolean canFallDamage(String worldName) {
@@ -203,6 +213,12 @@ public class WorldManager {
 
     public static String getSpawn(Player p) {
         String path = p.getWorld().getName() + ".spawn";
+        if (!worldObjects.containsKey(path)) return null;
+        return (String) worldObjects.get(path);
+    }
+
+    public static String getSpawn(World world) {
+        String path = world.getName() + ".spawn";
         if (!worldObjects.containsKey(path)) return null;
         return (String) worldObjects.get(path);
     }

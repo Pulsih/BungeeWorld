@@ -14,13 +14,13 @@ public class PlayerQuitListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
+        e.setQuitMessage(null);
         Player p = e.getPlayer();
         if (Values.CONFIG.isTeleportHubWhenJoin()) p.teleport(BWMethods.getLocation(Values.CONFIG.getHubSpawn()));
-        e.setQuitMessage(null);
 
         String quitMessage = WorldManager.getQuitMessage(p);
         if (quitMessage == null || quitMessage.equals("null")) return;
-        String message = BWChat.color(quitMessage.replace("%player%", ""));
+        String message = BWChat.color(quitMessage.replace("%player%", p.getName()));
         if (!Values.CONFIG.isIsolateChat()) Bukkit.broadcastMessage(message);
     }
 }
