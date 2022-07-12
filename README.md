@@ -1,11 +1,11 @@
 # ♻️ BungeeWorld Plugin ♻️
-### Description
+## Description
 This plugin allows you to separate various player statistics trought worlds.
 Every world will have his own inventory, effects and gamemode.
 If you don't want to use this feature, you can edit it in the file `config.yml`.
 It has more cool features like the ability to create as many items and guis as you want, using the `items.yml` and `guis.yml` files.
 
-### Custom Actions
+## Custom Actions
 Here you can have a list of all custom actions available.
 ```yaml
 # Make the player opening a gui using the identifier in the file guis.yml
@@ -35,7 +35,7 @@ Here you can have a list of all custom actions available.
 
 
 
-### Files
+## Files
 Default `worlds.yml` file:
 ```yaml
 ExampleWorld:
