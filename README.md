@@ -20,7 +20,8 @@ Here you can have a list of all custom actions available.
 # Force a player to chat, it can be used to send messages or execute commands.
 [PLAYER] <chat>
 
-# Broadcast a message ( Will work only in the current world if enabling the option isolate-chat in the config.yml )
+# Broadcast a message ( Will work only in the current world 
+# if enabling the option isolate-chat in the config.yml )
 [BROADCAST] <broadcast>
 
 # Give a custom item to the selected player. ( Use %player% for the player name )
@@ -28,7 +29,7 @@ Here you can have a list of all custom actions available.
 # slot: Indicates the slot in the slot bar where the item will be placed, if the slot is not
 # empty, it will add the item to the inventory.
 # force: force the item to be placed in the specified slot. ( This will destroy the item in the slot )
-[GIVE_CUSTOM_ITEM] <player-name> <custom-item> [optional: slot] [optional: force]
+[GIVE_CUSTOM_ITEM] <player-name> <custom-item> [slot] [force]
 ```
 
 
