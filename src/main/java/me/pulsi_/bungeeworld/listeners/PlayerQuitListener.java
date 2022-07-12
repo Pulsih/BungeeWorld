@@ -5,6 +5,7 @@ import me.pulsi_.bungeeworld.utils.BWChat;
 import me.pulsi_.bungeeworld.utils.BWMethods;
 import me.pulsi_.bungeeworld.values.Values;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,7 +17,10 @@ public class PlayerQuitListener implements Listener {
     public void onQuit(PlayerQuitEvent e) {
         e.setQuitMessage(null);
         Player p = e.getPlayer();
-        if (Values.CONFIG.isTeleportHubWhenJoin()) p.teleport(BWMethods.getLocation(Values.CONFIG.getHubSpawn()));
+        if (Values.CONFIG.isTeleportHubWhenJoin()) {
+            Location hub = BWMethods.getLocation(Values.CONFIG.getHubSpawn());
+            if (hub != null) p.teleport(hub);
+        }
 
         String quitMessage = WorldManager.getQuitMessage(p);
         if (quitMessage == null || quitMessage.equals("null")) return;

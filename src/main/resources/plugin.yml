@@ -1,8 +1,10 @@
 name: BungeeWorld
-version: v1.0
+version: 1.1
 main: me.pulsi_.bungeeworld.BungeeWorld
 api-version: 1.13
 load: STARTUP
+softdepend:
+  - PlaceholderAPI
 authors: [ Pulsi_ ]
 commands:
   bungeeworld:

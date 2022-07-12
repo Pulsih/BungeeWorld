@@ -59,27 +59,35 @@ public class ItemManager {
     }
 
     public static List<String> getItemActions(ItemStack item) {
+        List<String> nullList = new ArrayList<>();
+        if (item.getType().equals(Material.AIR) || !item.hasItemMeta()) return nullList;
+
         FileConfiguration items = BungeeWorld.getInstance().getConfigs().getConfig(ConfigManager.Type.ITEMS);
         ConfigurationSection section = items.getConfigurationSection("");
-        if (section == null) return new ArrayList<>();
+        if (section == null) return nullList;
 
-        String displayname = item.getItemMeta().getDisplayName();
-        List<String> lore = item.getItemMeta().getLore();
+        ItemMeta meta = item.getItemMeta();
+        if (!meta.hasDisplayName()) return nullList;
+
+        String displayname = meta.getDisplayName();
+        List<String> lore = meta.getLore();
         String material = item.getType().toString();
 
         for (String path : section.getKeys(false)) {
             String pathDisplayname = items.getString(path + ".displayname");
             if (pathDisplayname == null || !displayname.equals(BWChat.color(pathDisplayname))) continue;
 
-            List<String> pathLore = new ArrayList<>();
-            for (String line : items.getStringList(path + ".lore")) pathLore.add(BWChat.color(line));
-            if (!lore.equals(pathLore)) continue;
+            if (meta.hasLore()) {
+                List<String> pathLore = new ArrayList<>();
+                for (String line : items.getStringList(path + ".lore")) pathLore.add(BWChat.color(line));
+                if (!lore.equals(pathLore)) continue;
+            }
 
             String pathMaterial = items.getString(path + ".material");
             if (!material.equals(pathMaterial)) continue;
 
             return items.getStringList(path + ".actions");
         }
-        return new ArrayList<>();
+        return nullList;
     }
 }
