@@ -30,10 +30,10 @@ Here you can have a list of all custom actions available.
 # if enabling the option isolate-chat in the config.yml ).
 [BROADCAST] <broadcast>
 
-# Give a custom item to the selected player. ( Use %player% for the player name )
+# Give a custom item to the selected player.
 # First 2 args are essentials, the other 2 are optional.
 # slot: Indicates the slot in the slot bar where the item will be placed, if the slot is not
 # empty, it will add the item to the inventory.
 # force: force the item to be placed in the specified slot. ( This will destroy the item in the slot )
-[GIVE_CUSTOM_ITEM] <player-name> <custom-item> [slot] [force]
+[GIVE_CUSTOM_ITEM] <custom-item> [slot] [force]
 ```
