@@ -8,7 +8,7 @@ It has more cool features like the ability to create as many items and guis as y
 ## Custom Actions
 Here you can have a list of all custom actions available.
 ```yaml
-# Player a sound for the player.
+# Play a sound for the player.
 [SOUND] <sound-identifier> <volume> <pitch>
 
 # Send to the player a title with an optional sub-title.
