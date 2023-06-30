@@ -1,13 +1,13 @@
 package me.pulsi_.bungeeworld.utils;
 
-import me.pulsi_.bungeeworld.managers.MessagesManager;
+import me.pulsi_.bungeeworld.managers.BWMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class BWMethods {
+public class BWUtils {
 
     public static String getStringLocation(Location location) {
         return location.toString().replace("Location{world=CraftWorld{name=", "").replace("},x=", " ")
@@ -16,21 +16,27 @@ public class BWMethods {
     }
 
     public static Location getLocation(String path) {
-        if (path == null) return null;
-        String[] s = path.split(" ");
         Location loc;
+        if (path == null)
+            return null;
+        String[] s = path.split(" ");
         try {
-            loc = new Location(Bukkit.getWorld(s[0]),
-                    Double.parseDouble(s[1]),
-                    Double.parseDouble(s[2]),
-                    Double.parseDouble(s[3]),
-                    Float.parseFloat(s[5]),
-                    Float.parseFloat(s[4]));
-        } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
-            BWLogger.error("\"" + path + "\" Is an invalid location!");
+            loc = new Location(Bukkit.getWorld(s[0]), Double.parseDouble(s[1]), Double.parseDouble(s[2]), Double.parseDouble(s[3]), Float.parseFloat(s[5]), Float.parseFloat(s[4]));
+        } catch (ArrayIndexOutOfBoundsException|NumberFormatException e) {
             loc = null;
         }
         return loc;
+    }
+
+    public static String getStringAfterArgs(String[] args, int arg) {
+        if (arg < 0 || arg >= args.length) return null;
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = arg; i < args.length; i++) {
+            builder.append(args[i]);
+            if (i + 1 < args.length) builder.append(" ");
+        }
+        return builder.toString();
     }
 
     public static void playSound(Player p, String soundString) {
@@ -40,7 +46,7 @@ public class BWMethods {
             int volume = Integer.parseInt(parts[1]);
             int pitch = Integer.parseInt(parts[2]);
             p.playSound(p.getLocation(), sound, volume, pitch);
-        } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
+        } catch (IllegalArgumentException|ArrayIndexOutOfBoundsException e) {
             BWLogger.error("\"" + soundString + "\" Is an invalid sound type!");
         }
     }
@@ -52,12 +58,14 @@ public class BWMethods {
             String title = parts[0];
             String subtitle = parts[1];
             p.sendTitle(BWChat.color(title), BWChat.color(subtitle));
-        } else p.sendTitle(BWChat.color(titleString), "");
+        } else {
+            p.sendTitle(BWChat.color(titleString), "");
+        }
     }
 
     public static boolean hasPermissions(CommandSender s, String permission) {
         if (!s.hasPermission(permission)) {
-            MessagesManager.send(s, "no_permission");
+            BWMessages.send(s, "no_permission");
             return false;
         }
         return true;
@@ -65,7 +73,7 @@ public class BWMethods {
 
     public static boolean isPlayer(CommandSender s) {
         if (!(s instanceof Player)) {
-            MessagesManager.send(s, "not_player");
+            BWMessages.send(s, "not_player");
             return false;
         }
         return true;
@@ -81,6 +89,9 @@ public class BWMethods {
     }
 
     public static void clearChat(Player p) {
-        for (int i = 0; i < 60; i++) p.sendMessage("");
+        for (int i = 0; i < 200; ) {
+            p.sendMessage("");
+            i++;
+        }
     }
 }

@@ -1,4 +1,4 @@
-package me.pulsi_.bungeeworld.worldSeparator;
+package me.pulsi_.bungeeworld.players;
 
 import me.pulsi_.bungeeworld.BungeeWorld;
 import me.pulsi_.bungeeworld.utils.BWLogger;
@@ -13,49 +13,66 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class PlayerManager {
+public class PlayerRegistry {
 
-    private static final HashMap<UUID, File> playerFile = new HashMap<>();
+    private final HashMap<UUID, BWPlayer> players = new HashMap<>();
 
-    private static final HashMap<UUID, FileConfiguration> playerConfig = new HashMap<>();
+    public HashMap<UUID, BWPlayer> getPlayers() {
+        return players;
+    }
 
-    public static File getPlayerFile(Player p) {
-        if (!playerFile.containsKey(p.getUniqueId())) {
-            File file = new File(BungeeWorld.getInstance().getDataFolder(), "playerdata" + File.separator + p.getUniqueId() + ".yml");
+    public BWPlayer registerPlayer(Player p) {
+        players.put(p.getUniqueId(), new BWPlayer());
+
+        BWPlayer player = players.get(p.getUniqueId());
+        player.configFile = getPlayerFile(p);
+        player.config = getPlayerConfig(p);
+
+        return player;
+    }
+
+    public File getPlayerFile(Player p) {
+        if (players.get(p.getUniqueId()).configFile == null) {
+            File file = new File(BungeeWorld.INSTANCE.getDataFolder(), "playerdata" + File.separator + p.getUniqueId() + ".yml");
+
             try {
+                file.getParentFile().mkdir();
                 file.createNewFile();
             } catch (IOException e) {
                 BWLogger.error(e.getMessage());
             }
-            playerFile.put(p.getUniqueId(), file);
+
+            players.get(p.getUniqueId()).configFile = file;
         }
-        return playerFile.get(p.getUniqueId());
+        return players.get(p.getUniqueId()).configFile;
     }
 
-    public static FileConfiguration getPlayerConfig(Player p) {
-        if (!playerConfig.containsKey(p.getUniqueId())) {
+    public FileConfiguration getPlayerConfig(Player p) {
+        if (players.get(p.getUniqueId()).config == null) {
             File file = getPlayerFile(p);
             FileConfiguration config = new YamlConfiguration();
+
             try {
                 config.load(file);
             } catch (IOException | InvalidConfigurationException e) {
                 BWLogger.error(e.getMessage());
             }
-            playerConfig.put(p.getUniqueId(), config);
+
+            players.get(p.getUniqueId()).config = config;
         }
-        return playerConfig.get(p.getUniqueId());
+        return players.get(p.getUniqueId()).config;
     }
 
-    public static void savePlayerFile(Player p, boolean async) {
+    public void savePlayerFile(Player p, boolean async) {
         File file = getPlayerFile(p);
         FileConfiguration config = getPlayerConfig(p);
 
         if (async) {
-            Bukkit.getScheduler().runTaskAsynchronously(BungeeWorld.getInstance(), () -> {
+            Bukkit.getScheduler().runTaskAsynchronously(BungeeWorld.INSTANCE, () -> {
                 try {
                     config.save(file);
                 } catch (Exception ex) {
-                    Bukkit.getScheduler().runTask(BungeeWorld.getInstance(), () -> {
+                    Bukkit.getScheduler().runTask(BungeeWorld.INSTANCE, () -> {
                         try {
                             config.save(file);
                         } catch (IOException e) {
@@ -73,7 +90,7 @@ public class PlayerManager {
         }
     }
 
-    public static void reloadPlayerFile(Player p) {
+    public void reloadPlayerFile(Player p) {
         File file = getPlayerFile(p);
         FileConfiguration config = getPlayerConfig(p);
 

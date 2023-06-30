@@ -1,154 +1,102 @@
 package me.pulsi_.bungeeworld.worldSeparator;
 
 import me.pulsi_.bungeeworld.BungeeWorld;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
+import me.pulsi_.bungeeworld.values.Values;
+import me.pulsi_.bungeeworld.worldSeparator.managers.*;
 import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-
-import java.util.*;
 
 public class Storage {
 
-    public static boolean isRegistered(Player p) {
-        FileConfiguration playerData = PlayerManager.getPlayerConfig(p);
-        String worldName = p.getWorld().getName();
+    public static void switchStatistics(Player p, String fromWorld) {
+        boolean save = false;
 
-        ConfigurationSection playerWorlds = playerData.getConfigurationSection(p.getUniqueId() + "");
-        return playerWorlds != null && playerWorlds.getKeys(false).contains(worldName);
-    }
+        EffectManager effectManager = new EffectManager(p);
+        EnderChestManager enderChestManager = new EnderChestManager(p);
+        GameModeManager gameModeManager = new GameModeManager(p);
+        HealthManager healthManager = new HealthManager(p);
+        HungerManager hungerManager = new HungerManager(p);
+        InventoryManager inventoryManager = new InventoryManager(p);
 
-    public static boolean isRegistered(Player p, String worldName) {
-        FileConfiguration playerData = PlayerManager.getPlayerConfig(p);
-
-        ConfigurationSection playerWorlds = playerData.getConfigurationSection(p.getUniqueId() + "");
-        return playerWorlds != null && playerWorlds.getKeys(false).contains(worldName);
-    }
-
-    public static boolean isRegistered(Player p, World world) {
-        FileConfiguration playerData = PlayerManager.getPlayerConfig(p);
-        String worldName = world.getName();
-
-        ConfigurationSection playerWorlds = playerData.getConfigurationSection(p.getUniqueId() + "");
-        return playerWorlds != null && playerWorlds.getKeys(false).contains(worldName);
-    }
-
-    public static void clearPlayer(Player p) {
-        p.getInventory().clear();
-        for (PotionEffect potion : p.getActivePotionEffects()) p.removePotionEffect(potion.getType());
-        p.setGameMode(GameMode.SURVIVAL);
-    }
-
-    public static void savePlayerStatistics(Player p) {
-        FileConfiguration playerData = PlayerManager.getPlayerConfig(p);
-        String worldName = p.getWorld().getName();
-        UUID uuid = p.getUniqueId();
-
-        List<ItemStack> inventory = new ArrayList<>(Arrays.asList(p.getInventory().getContents()));
-        Collection<PotionEffect> effects = new ArrayList<>(p.getActivePotionEffects());
-
-        playerData.set(uuid + "." + worldName + ".inventory", inventory);
-        playerData.set(uuid + "." + worldName + ".effects", effects);
-        playerData.set(uuid + "." + worldName + ".gamemode", p.getGameMode().toString());
-
-        PlayerManager.savePlayerFile(p, true);
-    }
-
-    public static void savePlayerStatistics(Player p, World world) {
-        FileConfiguration playerData = PlayerManager.getPlayerConfig(p);
-        String worldName = world.getName();
-        UUID uuid = p.getUniqueId();
-
-        List<ItemStack> inventory = new ArrayList<>(Arrays.asList(p.getInventory().getContents()));
-        Collection<PotionEffect> effects = new ArrayList<>(p.getActivePotionEffects());
-
-        playerData.set(uuid + "." + worldName + ".inventory", inventory);
-        playerData.set(uuid + "." + worldName + ".effects", effects);
-        playerData.set(uuid + "." + worldName + ".gamemode", p.getGameMode().toString());
-
-        PlayerManager.savePlayerFile(p, true);
-    }
-
-    public static void savePlayerStatistics(Player p, String worldName) {
-        FileConfiguration playerData = PlayerManager.getPlayerConfig(p);
-        UUID uuid = p.getUniqueId();
-
-        List<ItemStack> inventory = new ArrayList<>(Arrays.asList(p.getInventory().getContents()));
-        Collection<PotionEffect> effects = new ArrayList<>(p.getActivePotionEffects());
-
-        playerData.set(uuid + "." + worldName + ".inventory", inventory);
-        playerData.set(uuid + "." + worldName + ".effects", effects);
-        playerData.set(uuid + "." + worldName + ".gamemode", p.getGameMode().toString());
-
-        PlayerManager.savePlayerFile(p, true);
-    }
-
-    public static void givePlayerStatistics(Player p) {
-        FileConfiguration playerData = PlayerManager.getPlayerConfig(p);
-        String worldName = p.getWorld().getName();
-        UUID uuid = p.getUniqueId();
-
-        ConfigurationSection playerWorlds = playerData.getConfigurationSection(p.getUniqueId() + "");
-        if (playerWorlds == null || !playerWorlds.getKeys(false).contains(worldName)) {
-            savePlayerStatistics(p, worldName);
-            return;
+        if (Values.CONFIG.isIsolateEffects()) {
+            effectManager.loadEffectsToHashMap(fromWorld);
+            if (effectManager.setEffects(true)) save = true;
+        }
+        if (Values.CONFIG.isIsolateEnderchests()) {
+            enderChestManager.loadEnderChestToHashMap(fromWorld);
+            if (enderChestManager.setEnderChest(true)) save = true;
+        }
+        if (Values.CONFIG.isIsolateGamemode()) {
+            gameModeManager.loadGameModeToHashMap(fromWorld);
+            if (gameModeManager.setGameMode(true)) save = true;
+        }
+        if (Values.CONFIG.isIsolateHealth()) {
+            healthManager.loadHealthToHashMap(fromWorld);
+            if (healthManager.setHealth(true)) save = true;
+        }
+        if (Values.CONFIG.isIsolateHunger()) {
+            hungerManager.loadHungerToHashMap(fromWorld);
+            if (hungerManager.setHunger(true)) save = true;
+        }
+        if (Values.CONFIG.isIsolateInventories()) {
+            inventoryManager.loadInventoryToHashMap(fromWorld);
+            if (inventoryManager.setInventory(true)) save = true;
         }
 
-        ItemStack[] content = playerData.getList(uuid + "." + worldName + ".inventory").toArray(new ItemStack[0]);
-        Bukkit.getScheduler().runTaskAsynchronously(BungeeWorld.getInstance(), () -> p.getInventory().setContents(content));
-
-        String gamemode = playerData.getString(uuid + "." + worldName + ".gamemode");
-        p.setGameMode(GameMode.valueOf(gamemode));
-
-        Collection<PotionEffect> effects = (Collection<PotionEffect>) playerData.getList(uuid + "." + worldName + ".effects");
-        if (effects != null && !effects.isEmpty()) p.addPotionEffects(effects);
-        else for (PotionEffect potion : p.getActivePotionEffects()) p.removePotionEffect(potion.getType());
+        if (save || Values.CONFIG.isSaveStatisticsOnWorldChange()) {
+            effectManager.saveEffectsToFile(fromWorld, false);
+            inventoryManager.saveInventoryToFile(fromWorld, false);
+            gameModeManager.saveGameModeToFile(fromWorld, false);
+            healthManager.saveHealthToFile(fromWorld, false);
+            hungerManager.saveHungerToFile(fromWorld, false);
+            inventoryManager.saveInventoryToFile(fromWorld, false);
+            BungeeWorld.INSTANCE.getPlayerRegistry().savePlayerFile(p, true);
+        }
     }
 
-    public static void givePlayerStatistics(Player p, World world) {
-        FileConfiguration playerData = PlayerManager.getPlayerConfig(p);
-        String worldName = world.getName();
-        UUID uuid = p.getUniqueId();
-
-        ConfigurationSection playerWorlds = playerData.getConfigurationSection(p.getUniqueId() + "");
-        if (playerWorlds == null || !playerWorlds.getKeys(false).contains(worldName)) {
-            savePlayerStatistics(p, worldName);
-            return;
-        }
-
-        ItemStack[] content = playerData.getList(uuid + "." + worldName + ".inventory").toArray(new ItemStack[0]);
-        Bukkit.getScheduler().runTaskAsynchronously(BungeeWorld.getInstance(), () -> p.getInventory().setContents(content));
-
-        String gamemode = playerData.getString(uuid + "." + worldName + ".gamemode");
-        p.setGameMode(GameMode.valueOf(gamemode));
-
-        Collection<PotionEffect> effects = (Collection<PotionEffect>) playerData.getList(uuid + "." + worldName + ".effects");
-        if (effects != null && !effects.isEmpty()) p.addPotionEffects(effects);
-        else for (PotionEffect potion : p.getActivePotionEffects()) p.removePotionEffect(potion.getType());
+    public static void updateCurrentStatistic(Player p) {
+        new EffectManager(p).loadEffectsToHashMap();
+        new EnderChestManager(p).loadEnderChestToHashMap();
+        new GameModeManager(p).loadGameModeToHashMap();
+        new HealthManager(p).loadHealthToHashMap();
+        new HungerManager(p).loadHungerToHashMap();
+        new InventoryManager(p).loadInventoryToHashMap();
     }
 
-    public static void givePlayerStatistics(Player p, String worldName) {
-        FileConfiguration playerData = PlayerManager.getPlayerConfig(p);
-        UUID uuid = p.getUniqueId();
+    public static void updateAllStatistic(Player p) {
+        new EffectManager(p).loadAllEffectsToHashMap();
+        new EnderChestManager(p).loadEnderChestsToHashMap();
+        new GameModeManager(p).loadGameModesToHashMap();
+        new HealthManager(p).loadHealthsToHashMap();
+        new HungerManager(p).loadHungersToHashMap();
+        new InventoryManager(p).loadInventoriesToHashMap();
+    }
 
-        ConfigurationSection playerWorlds = playerData.getConfigurationSection(p.getUniqueId() + "");
-        if (playerWorlds == null || !playerWorlds.getKeys(false).contains(worldName)) {
-            savePlayerStatistics(p, worldName);
-            return;
-        }
+    public static void saveAllPlayerStatistics(Player p) {
+        new EffectManager(p).saveAllEffectsToFile(false);
+        new EnderChestManager(p).saveEnderChestsToFile(false);
+        new GameModeManager(p).saveGameModesToFile(false);
+        new HealthManager(p).saveHealthsToFile(false);
+        new HungerManager(p).saveHungersToFile(false);
+        new InventoryManager(p).saveInventoriesToFile(false);
 
-        ItemStack[] content = playerData.getList(uuid + "." + worldName + ".inventory").toArray(new ItemStack[0]);
-        Bukkit.getScheduler().runTaskAsynchronously(BungeeWorld.getInstance(), () -> p.getInventory().setContents(content));
+        BungeeWorld.INSTANCE.getPlayerRegistry().savePlayerFile(p, true);
+    }
 
-        String gamemode = playerData.getString(uuid + "." + worldName + ".gamemode");
-        p.setGameMode(GameMode.valueOf(gamemode));
+    public static void givePlayerStatistics(Player p, boolean clear) {
+        givePlayerStatistics(p, p.getWorld().getName(), clear);
+    }
 
-        Collection<PotionEffect> effects = (Collection<PotionEffect>) playerData.getList(uuid + "." + worldName + ".effects");
-        if (effects != null && !effects.isEmpty()) p.addPotionEffects(effects);
-        else for (PotionEffect potion : p.getActivePotionEffects()) p.removePotionEffect(potion.getType());
+    public static void givePlayerStatistics(Player p, World world, boolean clear) {
+        givePlayerStatistics(p, world.getName(), clear);
+    }
+
+    public static void givePlayerStatistics(Player p, String worldName, boolean clear) {
+        new EffectManager(p).setEffects(worldName, clear);
+        new EnderChestManager(p).setEnderChest(worldName, clear);
+        new GameModeManager(p).setGameMode(worldName, clear);
+        new HealthManager(p).setHealth(worldName, clear);
+        new HungerManager(p).setHunger(worldName, clear);
+        new InventoryManager(p).setInventory(worldName, clear);
     }
 }

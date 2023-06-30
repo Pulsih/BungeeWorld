@@ -22,8 +22,6 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 
-import java.io.File;
-
 public class bStats {
 
     private final BungeeWorld plugin;

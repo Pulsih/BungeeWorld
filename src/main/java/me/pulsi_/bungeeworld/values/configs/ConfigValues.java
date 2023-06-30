@@ -6,24 +6,54 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public class ConfigValues {
 
-    private String hubName, hubSpawn, hubTeleportSound, defaultChatFormat, securityDenyMessage, commandsDenyMessage, deathMessage, joinMessage, quitMessage;
-    private String joinTitle, joinSound;
-    private boolean joinSendTitle, joinPlaySound;
-    private boolean disableBlockPlace, disableBlockBreak, disableMobSpawn, disableExplosion, disableActions, disableDrops, disablePickup, disableFall, disablePvP;
-    private boolean updateChecker, teleportHubWhenJoin, isolateChat, isolateInventories;
+    private String hubName;
+
+    private String hubSpawn;
+
+    private String hubTeleportSound;
+
+    private String chatFormat;
+
+    private String joinMessage;
+
+    private String quitMessage;
+
+    private String deathMessage1;
+
+    private String deathMessage2;
+
+    private String deathMessage3;
+
+    private String joinTitle;
+
+    private String joinSound;
+
+    private boolean joinSendTitle;
+
+    private boolean joinPlaySound;
+
+    private boolean updateChecker;
+
+    private boolean teleportHubWhenJoin;
+
+    private boolean clearChat;
+
+    private boolean saveStatisticsOnWorldChange, denyDotsCommands;
+
+    boolean isolateChat, isolateEffects, isolateEnderchests, isolateGamemode, isolateHealth, isolateHunger, isolateInventories;
 
     public void loadValues() {
-        FileConfiguration config = BungeeWorld.getInstance().getConfigs().getConfig(ConfigManager.Type.CONFIG);
-
+        FileConfiguration config = BungeeWorld.INSTANCE.getConfigs().getConfig(ConfigManager.Type.CONFIG);
+        
         hubName = config.getString("hub.name");
         hubSpawn = config.getString("hub.spawn");
         hubTeleportSound = config.getString("hub.teleport-sound");
-        defaultChatFormat = config.getString("default-formats.chat");
-        securityDenyMessage = config.getString("default-formats.security-deny-message");
-        commandsDenyMessage = config.getString("default-formats.commands-deny-message");
-        deathMessage = config.getString("default-formats.death-message");
-        joinMessage = config.getString("default-formats.join-message");
-        quitMessage = config.getString("default-formats.quit-message");
+        chatFormat = config.getString("server-settings.chat");
+        joinMessage = config.getString("server-settings.join-message");
+        quitMessage = config.getString("server-settings.quit-message");
+        deathMessage1 = config.getString("server-settings.death-message");
+        deathMessage2 = config.getString("server-settings.killer-death-message");
+        deathMessage3 = config.getString("server-settings.killer-weapon-death-message");
         joinTitle = config.getString("join-settings.title.text");
         joinSendTitle = config.getBoolean("join-settings.title.send");
         joinSound = config.getString("join-settings.sound.sound-type");
@@ -32,15 +62,14 @@ public class ConfigValues {
         teleportHubWhenJoin = config.getBoolean("hub.teleport-when-join");
         isolateChat = config.getBoolean("server-settings.isolate-chat");
         isolateInventories = config.getBoolean("server-settings.isolate-inventories");
-        disableBlockPlace = config.getBoolean("default-formats.disable-block-place");
-        disableBlockBreak = config.getBoolean("default-formats.disable-block-break");
-        disableMobSpawn = config.getBoolean("default-formats.disable-mob-spawning");
-        disableExplosion = config.getBoolean("default-formats.disable-explosions");
-        disableActions = config.getBoolean("default-formats.disable-player-actions");
-        disableDrops = config.getBoolean("default-formats.disable-players-drops");
-        disablePickup = config.getBoolean("default-formats.disable-players-pickup");
-        disableFall = config.getBoolean("default-formats.disable-fall-damage");
-        disablePvP = config.getBoolean("default-formats.disable-pvp");
+        isolateEffects = config.getBoolean("server-settings.isolate-effects");
+        isolateGamemode = config.getBoolean("server-settings.isolate-gamemode");
+        isolateHealth = config.getBoolean("server-settings.isolate-health");
+        isolateHunger = config.getBoolean("server-settings.isolate-hunger");
+        isolateEnderchests = config.getBoolean("server-settings.isolate-enderchests");
+        clearChat = config.getBoolean("server-settings.clear-chat");
+        saveStatisticsOnWorldChange = config.getBoolean("server-settings.save-statistics-on-world-change");
+        denyDotsCommands = config.getBoolean("server-settings.deny-dots-commands");
     }
 
     public String getHubName() {
@@ -55,20 +84,16 @@ public class ConfigValues {
         return hubTeleportSound;
     }
 
-    public String getDefaultChatFormat() {
-        return defaultChatFormat;
+    public String getDeathMessage1() {
+        return deathMessage1;
     }
 
-    public String getSecurityDenyMessage() {
-        return securityDenyMessage;
+    public String getDeathMessage2() {
+        return deathMessage2;
     }
 
-    public String getCommandsDenyMessage() {
-        return commandsDenyMessage;
-    }
-
-    public String getDeathMessage() {
-        return deathMessage;
+    public String getDeathMessage3() {
+        return deathMessage3;
     }
 
     public String getJoinMessage() {
@@ -111,39 +136,35 @@ public class ConfigValues {
         return isolateInventories;
     }
 
-    public boolean isDisableBlockPlace() {
-        return disableBlockPlace;
+    public boolean isIsolateEffects() {
+        return isolateEffects;
     }
 
-    public boolean isDisableBlockBreak() {
-        return disableBlockBreak;
+    public boolean isIsolateGamemode() {
+        return isolateGamemode;
     }
 
-    public boolean isDisableMobSpawn() {
-        return disableMobSpawn;
+    public boolean isIsolateHealth() {
+        return isolateHealth;
     }
 
-    public boolean isDisableExplosion() {
-        return disableExplosion;
+    public boolean isIsolateHunger() {
+        return isolateHunger;
     }
 
-    public boolean isDisableActions() {
-        return disableActions;
+    public boolean isIsolateEnderchests() {
+        return isolateEnderchests;
     }
 
-    public boolean isDisableDrops() {
-        return disableDrops;
+    public boolean isClearChat() {
+        return clearChat;
     }
 
-    public boolean isDisablePickup() {
-        return disablePickup;
+    public boolean isSaveStatisticsOnWorldChange() {
+        return saveStatisticsOnWorldChange;
     }
 
-    public boolean isDisableFall() {
-        return disableFall;
-    }
-
-    public boolean isDisablePvP() {
-        return disablePvP;
+    public boolean isDenyDotsCommands() {
+        return denyDotsCommands;
     }
 }

@@ -27,7 +27,7 @@ public class GuiManager implements InventoryHolder {
 
     public void openGui(Player p, String guiIdentifier) {
         if (!inventoryGetter.containsKey(guiIdentifier)) {
-            MessagesManager.send(p, "invalid_gui");
+            BWMessages.send(p, "invalid_gui");
             return;
         }
         Inventory gui = inventoryGetter.get(guiIdentifier);
@@ -37,7 +37,7 @@ public class GuiManager implements InventoryHolder {
     }
 
     public void loadGuis() {
-        ConfigManager manager = BungeeWorld.getInstance().getConfigs();
+        ConfigManager manager = BungeeWorld.INSTANCE.getConfigs();
         FileConfiguration guis = manager.getConfig(ConfigManager.Type.GUIS);
 
         guisIdentifier.clear();

@@ -31,7 +31,7 @@ public class GuiListener implements Listener {
         String identifier = GuiManager.openedInventory.get(p);
         if (identifier == null) return;
 
-        ConfigManager manager = BungeeWorld.getInstance().getConfigs();
+        ConfigManager manager = BungeeWorld.INSTANCE.getConfigs();
         FileConfiguration guis = manager.getConfig(ConfigManager.Type.GUIS);
 
         ConfigurationSection items = guis.getConfigurationSection(identifier + ".items");

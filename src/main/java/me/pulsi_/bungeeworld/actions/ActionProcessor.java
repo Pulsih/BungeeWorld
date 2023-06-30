@@ -4,7 +4,7 @@ import me.pulsi_.bungeeworld.managers.GuiManager;
 import me.pulsi_.bungeeworld.managers.ItemManager;
 import me.pulsi_.bungeeworld.utils.BWChat;
 import me.pulsi_.bungeeworld.utils.BWLogger;
-import me.pulsi_.bungeeworld.utils.BWMethods;
+import me.pulsi_.bungeeworld.utils.BWUtils;
 import me.pulsi_.bungeeworld.values.Values;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -116,7 +116,7 @@ public class ActionProcessor {
         }
 
         String number = paths[2];
-        if (!BWMethods.isValidNumber(number)) {
+        if (!BWUtils.isValidNumber(number)) {
             BWLogger.error("Invalid number for the action \"" + action + "\"");
             return true;
         }

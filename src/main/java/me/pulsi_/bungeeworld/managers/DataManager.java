@@ -9,23 +9,27 @@ import me.pulsi_.bungeeworld.external.bStats;
 import me.pulsi_.bungeeworld.listeners.*;
 import me.pulsi_.bungeeworld.utils.BWLogger;
 import me.pulsi_.bungeeworld.values.Values;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 
 public class DataManager {
 
-    public static void setupPlugin() {
+    private final BungeeWorld plugin;
+    
+    public DataManager(BungeeWorld plugin) {
+        this.plugin = plugin;
+    }
+    
+    public void setupPlugin() {
         long startTime = System.currentTimeMillis();
         long time;
 
         BWLogger.log("");
         BWLogger.log("    &2&lBungee&a&lWorld &2Enabling plugin...");
-        BWLogger.log("    &aRunning on version &f" + BungeeWorld.getInstance().getDescription().getVersion() + "&a!");
+        BWLogger.log("    &aRunning on version &f" + plugin.getDescription().getVersion() + "&a!");
 
         time = System.currentTimeMillis();
-        new bStats(BungeeWorld.getInstance());
-        BungeeWorld.getInstance().getConfigs().createConfigs();
+        new bStats(plugin);
+        reloadPlugin();
         BWLogger.log("    &aLoaded config files! &8(&3" + (System.currentTimeMillis() - time) + "ms&8)");
 
         time = System.currentTimeMillis();
@@ -39,50 +43,49 @@ public class DataManager {
         BWLogger.log("");
     }
 
-    public static void reloadConfigs() {
-        ConfigManager configs = BungeeWorld.getInstance().getConfigs();
+    public void reloadPlugin() {
+        ConfigManager configs = plugin.getConfigs();
 
+        plugin.getConfigs().createConfigs();
         configs.reloadConfig(ConfigManager.Type.CONFIG);
         configs.reloadConfig(ConfigManager.Type.GUIS);
         configs.reloadConfig(ConfigManager.Type.ITEMS);
         configs.reloadConfig(ConfigManager.Type.MESSAGES);
         configs.reloadConfig(ConfigManager.Type.WORLDS);
         Values.CONFIG.loadValues();
-        MessagesManager.loadMessages();
+        BWMessages.loadMessages();
+        plugin.getWorldsRegistry().loadWorlds();
+
         ItemManager.loadItems();
-        WorldManager.loadWorldsValues();
         new GuiManager().loadGuis();
-        for (World world : Bukkit.getWorlds()) WorldManager.registerWorld(world);
     }
 
-    private static void registerCommands() {
-        BungeeWorld plugin = BungeeWorld.getInstance();
-
+    private void registerCommands() {
         plugin.getCommand("bungeeworld").setExecutor(new MainCmd());
         plugin.getCommand("hub").setExecutor(new HubCmd());
         plugin.getCommand("spawn").setExecutor(new SpawnCmd());
     }
 
-    private static void registerEvents() {
-        BungeeWorld plugin = BungeeWorld.getInstance();
-        PluginManager pluginManager = plugin.getServer().getPluginManager();
+    private void registerEvents() {
+        PluginManager plManager = plugin.getServer().getPluginManager();
 
-        pluginManager.registerEvents(new BlockBreakListener(), plugin);
-        pluginManager.registerEvents(new BlockPlaceListener(), plugin);
-        pluginManager.registerEvents(new CommandListener(), plugin);
-        pluginManager.registerEvents(new DamageListener(), plugin);
-        pluginManager.registerEvents(new EntityDamageListener(), plugin);
-        pluginManager.registerEvents(new EntitySpawnListener(), plugin);
-        pluginManager.registerEvents(new ExplosionListener(), plugin);
-        pluginManager.registerEvents(new GuiListener(), plugin);
-        pluginManager.registerEvents(new PlayerChatListener(), plugin);
-        pluginManager.registerEvents(new PlayerDropListener(), plugin);
-        pluginManager.registerEvents(new PlayerInteractListener(), plugin);
-        pluginManager.registerEvents(new PlayerJoinListener(), plugin);
-        pluginManager.registerEvents(new PlayerPickupListener(), plugin);
-        pluginManager.registerEvents(new PlayerQuitListener(), plugin);
-        pluginManager.registerEvents(new PlayerRespawnListener(), plugin);
-        pluginManager.registerEvents(new WorldChangeListener(), plugin);
-        pluginManager.registerEvents(new UpdateChecker(plugin), plugin);
+        plManager.registerEvents(new BlockBreakListener(), plugin);
+        plManager.registerEvents(new BlockPlaceListener(), plugin);
+        plManager.registerEvents(new CommandListener(), plugin);
+        plManager.registerEvents(new DamageListener(), plugin);
+        plManager.registerEvents(new EntityDamageListener(), plugin);
+        plManager.registerEvents(new EntitySpawnListener(), plugin);
+        plManager.registerEvents(new ExplosionListener(), plugin);
+        plManager.registerEvents(new GuiListener(), plugin);
+        plManager.registerEvents(new PlayerChatListener(), plugin);
+        plManager.registerEvents(new PlayerDeathListener(), plugin);
+        plManager.registerEvents(new PlayerDropListener(), plugin);
+        plManager.registerEvents(new PlayerInteractListener(), plugin);
+        plManager.registerEvents(new PlayerJoinListener(), plugin);
+        plManager.registerEvents(new PlayerPickupListener(), plugin);
+        plManager.registerEvents(new PlayerQuitListener(), plugin);
+        plManager.registerEvents(new PlayerRespawnListener(), plugin);
+        plManager.registerEvents(new WorldChangeListener(), plugin);
+        plManager.registerEvents(new UpdateChecker(plugin), plugin);
     }
 }

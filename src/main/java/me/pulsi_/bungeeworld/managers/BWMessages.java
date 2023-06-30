@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
-public class MessagesManager {
+public class BWMessages {
 
     private static final Map<String, List<String>> messages = new HashMap<>();
 
@@ -79,7 +79,7 @@ public class MessagesManager {
 
     public static void loadMessages() {
         messages.clear();
-        FileConfiguration config = BungeeWorld.getInstance().getConfigs().getConfig(ConfigManager.Type.MESSAGES);
+        FileConfiguration config = BungeeWorld.INSTANCE.getConfigs().getConfig(ConfigManager.Type.MESSAGES);
         Set<String> paths = config.getConfigurationSection("").getKeys(false);
         for (String path : paths) {
             List<String> listOfMessages = config.getStringList(path);

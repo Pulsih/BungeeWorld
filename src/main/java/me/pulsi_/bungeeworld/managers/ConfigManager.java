@@ -2,7 +2,6 @@ package me.pulsi_.bungeeworld.managers;
 
 import me.pulsi_.bungeeworld.BungeeWorld;
 import me.pulsi_.bungeeworld.utils.BWLogger;
-import me.pulsi_.bungeeworld.values.Values;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -19,8 +18,6 @@ public class ConfigManager {
     private int spacesCount = 0;
     private final String commentIdentifier = "bungeeworld_comment";
     private final String spaceIdentifier = "bungeeworld_space";
-
-    private final BungeeWorld plugin;
     private File configFile, guisFile, itemsFile, messagesFile, worldsFile;
     private FileConfiguration config, guisConfig, itemsConfig, messagesConfig, worldsConfig;
 
@@ -31,6 +28,8 @@ public class ConfigManager {
         MESSAGES,
         WORLDS
     }
+
+    private final BungeeWorld plugin;
 
     public ConfigManager(BungeeWorld plugin) {
         this.plugin = plugin;
@@ -55,20 +54,8 @@ public class ConfigManager {
         messagesConfig = new YamlConfiguration();
         worldsConfig = new YamlConfiguration();
 
-        reloadConfig(Type.CONFIG);
-        reloadConfig(Type.GUIS);
-        reloadConfig(Type.ITEMS);
-        reloadConfig(Type.MESSAGES);
-        reloadConfig(Type.WORLDS);
-
         buildConfig();
         buildMessages();
-
-        Values.CONFIG.loadValues();
-        MessagesManager.loadMessages();
-        ItemManager.loadItems();
-        WorldManager.loadWorldsValues();
-        new GuiManager().loadGuis();
     }
 
     public FileConfiguration getConfig(Type type) {
@@ -159,7 +146,7 @@ public class ConfigManager {
     private void saveConfig(FileConfiguration c, File f, boolean async) {
         if (async) {
             try {
-                Bukkit.getScheduler().runTaskAsynchronously(BungeeWorld.getInstance(), () -> {
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                     try {
                         c.save(f);
                     } catch (IOException e) {
@@ -183,9 +170,9 @@ public class ConfigManager {
     }
 
     public void buildConfig() {
+        reloadConfig(Type.CONFIG);
         File newConfigFile = new File(plugin.getDataFolder(), "config.yml");
-        FileConfiguration newConfig = new YamlConfiguration();
-
+        YamlConfiguration newConfig = new YamlConfiguration();
         addComments(newConfig,
                 "Configuration File of BungeeWorld",
                 "Made by Pulsi_, Version v" + plugin.getDescription().getVersion());
@@ -200,16 +187,12 @@ public class ConfigManager {
         validatePath(config, newConfig, "hub.name", "SetName Using /bw sethub");
         validatePath(config, newConfig, "hub.spawn", "SetSpawn Using /bw sethub");
         addSpace(newConfig, "hub");
-
-        addCommentsUnder(newConfig, "hub",
-                "Choose if a player will be teleported",
-                "to the hub spawn when joining.");
+        
+        addCommentsUnder(newConfig, "hub", "Choose if a player will be teleported", "to the hub spawn when joining.");
         validatePath(config, newConfig, "hub.teleport-when-join", true);
         addSpace(newConfig, "hub");
 
-        addCommentsUnder(newConfig, "hub",
-                "The sound played when teleporting to the hub.",
-                "( SOUND_TYPE VOLUME PITCH )");
+        addCommentsUnder(newConfig, "hub", "The sound played when teleporting to the hub.", "( SOUND_TYPE VOLUME PITCH )");
         validatePath(config, newConfig, "hub.teleport-sound", "ENTITY_ENDERMAN_TELEPORT 5 1");
         addSpace(newConfig);
 
@@ -224,40 +207,96 @@ public class ConfigManager {
         validatePath(config, newConfig, "join-settings.sound.sound-type", "ENTITY_PLAYER_LEVELUP 5 1");
         addSpace(newConfig);
 
-        addCommentsUnder(newConfig, "server-settings",
-                "Choose if the chat is divided world-by-world",
-                "or just use the normal server chat.");
-        validatePath(config, newConfig, "server-settings.isolate-chat", true);
-        addCommentsUnder(newConfig, "server-settings",
-                "This will separate inventory, effects",
-                "and gamemode between worlds.");
-        validatePath(config, newConfig, "server-settings.isolate-inventories", true);
-        addSpace(newConfig);
+        addCommentsUnder(newConfig, "server-settings", "Enable to deny to players commands", "like \"/plugin:command\"");
+        validatePath(config, newConfig, "server-settings.deny-dots-commands", true);
+        addSpace(newConfig, "server-settings");
 
-        addCommentsUnder(newConfig, "default-formats", "The default values that a new registered world will have");
-        validatePath(config, newConfig, "default-formats.chat", "&7%player%&8: &7%message%");
-        validatePath(config, newConfig, "default-formats.security-deny-message", "&c&lSorry! &7You can't do that here.");
-        validatePath(config, newConfig, "default-formats.disable-block-place", false);
-        validatePath(config, newConfig, "default-formats.disable-block-break", false);
-        validatePath(config, newConfig, "default-formats.disable-mob-spawning", false);
-        validatePath(config, newConfig, "default-formats.disable-explosions", false);
-        validatePath(config, newConfig, "default-formats.disable-player-actions", false);
-        validatePath(config, newConfig, "default-formats.disable-players-drops", false);
-        validatePath(config, newConfig, "default-formats.disable-players-pickup", false);
-        validatePath(config, newConfig, "default-formats.disable-fall-damage", false);
-        validatePath(config, newConfig, "default-formats.disable-pvp", false);
-        validatePath(config, newConfig, "default-formats.commands-deny-message", "Unknown command. Type \"/help\" for help.");
-        validatePath(config, newConfig, "default-formats.death-message", "&a%player% &fDied.");
-        validatePath(config, newConfig, "default-formats.join-message", "null");
-        validatePath(config, newConfig, "default-formats.quit-message", "null");
+        addCommentsUnder(newConfig, "server-settings", "Choose if the chat is divided world-by-world", "or just use the normal server chat.");
+        validatePath(config, newConfig, "server-settings.isolate-chat", true);
+        addSpace(newConfig, "server-settings");
+
+        addCommentsUnder(newConfig, "server-settings", "This will separate potion effects between worlds.");
+        validatePath(config, newConfig, "server-settings.isolate-effects", true);
+        addSpace(newConfig, "server-settings");
+
+        addCommentsUnder(newConfig, "server-settings", "This will separate the enderchests between worlds.");
+        validatePath(config, newConfig, "server-settings.isolate-enderchests", true);
+        addSpace(newConfig, "server-settings");
+        
+        addCommentsUnder(newConfig, "server-settings", "This will separate the gamemode between worlds.");
+        validatePath(config, newConfig, "server-settings.isolate-gamemode", true);
+        addSpace(newConfig, "server-settings");
+
+        addCommentsUnder(newConfig, "server-settings", "This will separate the health between worlds.");
+        validatePath(config, newConfig, "server-settings.isolate-health", true);
+        addSpace(newConfig, "server-settings");
+
+        addCommentsUnder(newConfig, "server-settings", "This will separate the hunger between worlds.");
+        validatePath(config, newConfig, "server-settings.isolate-hunger", true);
+        addSpace(newConfig, "server-settings");
+        
+        addCommentsUnder(newConfig, "server-settings", "This will separate inventory between worlds.");
+        validatePath(config, newConfig, "server-settings.isolate-inventories", true);
+        addSpace(newConfig, "server-settings");
+
+        addCommentsUnder(newConfig, "server-settings", "Enable this option to save the player", "stats every time he switch world.", "This is used to avoid any data lost in", "case the server crash. (Not Recommended)");
+        validatePath(config, newConfig, "server-settings.save-statistics-on-world-change", false);
+        addSpace(newConfig, "server-settings");
+
+        addCommentsUnder(newConfig, "server-settings", "Clear the player chat when switching world.");
+        validatePath(config, newConfig, "server-settings.clear-chat", true);
+        addSpace(newConfig, "server-settings");
+
+        addCommentsUnder(newConfig, "server-settings",
+                "Warning! Edit this value in worlds.yml,",
+                "this is used to register a new world with",
+                "that messages instead of a null one.",
+                "- The message showed when a player die.");
+        validatePath(config, newConfig, "server-settings.death-message", "&a%player% &cdied.");
+        addSpace(newConfig, "server-settings");
+
+        addCommentsUnder(newConfig, "server-settings",
+                "Warning! Edit this value in worlds.yml,",
+                "this is used to register a new world with",
+                "that messages instead of a null one.",
+                "- The message showed when a player gets",
+                "  killed from another one.");
+        validatePath(config, newConfig, "server-settings.killer-death-message", "&a%player% &chas been killed by &a%killer%");
+        addSpace(newConfig, "server-settings");
+
+        addCommentsUnder(newConfig, "server-settings",
+                "Warning! Edit this value in worlds.yml,",
+                "this is used to register a new world with",
+                "that messages instead of a null one.",
+                "- The message showed when a player gets",
+                "  killed from another one with a weapon.");
+        validatePath(config, newConfig, "server-settings.killer-weapon-death-message", "&a%player% &chas been killed by &a%killer% &cwith %item%");
+        addSpace(newConfig, "server-settings");
+
+        addCommentsUnder(newConfig, "server-settings",
+                "Warning! Edit this value in worlds.yml,",
+                "this is used to register a new world with",
+                "that messages instead of a null one.",
+                "- Message showed when a player join",
+                "the server / another world.");
+        validatePath(config, newConfig, "server-settings.join-message", "&8[&a+&8] &a%player%");
+        addSpace(newConfig, "server-settings");
+
+        addCommentsUnder(newConfig, "server-settings",
+                "Warning! Edit this value in worlds.yml,",
+                "this is used to register a new world with",
+                " that messages instead of a null one.",
+                "- Message showed when a player quit",
+                "the server / another world.");
+        validatePath(config, newConfig, "server-settings.quit-message", "&8[&c-&8] &a%player%");
         addSpace(newConfig);
 
         saveConfig(newConfig, newConfigFile, false);
         recreateFile(newConfigFile);
-        reloadConfig(Type.CONFIG);
     }
 
     public void buildMessages() {
+        reloadConfig(Type.MESSAGES);
         File newMessagesFile = new File(plugin.getDataFolder(), "messages.yml");
         FileConfiguration newMessages = new YamlConfiguration();
 
@@ -287,6 +326,7 @@ public class ConfigManager {
         validatePath(messagesConfig, newMessages, "item_given", "%prefix% &aSuccessfully given %item% to %player%!");
         validatePath(messagesConfig, newMessages, "player_sent", "%prefix% &aSuccessfully sent %player% to %world%!");
         validatePath(messagesConfig, newMessages, "player_tp", "%prefix% &aTeleported to %world%!");
+        validatePath(messagesConfig, newMessages, "setting_updated", "%prefix% &aSuccessfully updated the setting!");
         addSpace(newMessages);
 
         addComments(newMessages, "Plugin Errors.");
@@ -304,11 +344,14 @@ public class ConfigManager {
         validatePath(messagesConfig, newMessages, "specify_world", "%prefix% &cPlease specify a world!");
         validatePath(messagesConfig, newMessages, "invalid_world", "%prefix% &cPlease choose a valid world!");
         validatePath(messagesConfig, newMessages, "invalid_gui", "%prefix% &cPlease choose a valid gui!");
+        validatePath(messagesConfig, newMessages, "specify_setting", "%prefix% &cPlease specify a setting!");
+        validatePath(messagesConfig, newMessages, "invalid_setting", "%prefix% &cPlease choose a valid setting!");
+        validatePath(messagesConfig, newMessages, "specify_value", "%prefix% &cPlease specify a value!");
+        validatePath(messagesConfig, newMessages, "invalid_format", "%prefix% &cYou can't use this command format!");
         addSpace(newMessages);
 
         saveConfig(newMessages, newMessagesFile, false);
         recreateFile(newMessagesFile);
-        reloadConfig(Type.MESSAGES);
     }
 
     private void recreateFile(File file) {
