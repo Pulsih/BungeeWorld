@@ -32,7 +32,8 @@ public class PlayerQuitListener implements Listener {
             Location hub = BWUtils.getLocation(Values.CONFIG.getHubSpawn());
             if (hub != null) p.teleport(hub);
         }
-        BungeeWorld.INSTANCE.getPlayerRegistry().getPlayers().remove(p.getUniqueId());
+
+        Bukkit.getScheduler().runTaskLater(BungeeWorld.INSTANCE, () -> BungeeWorld.INSTANCE.getPlayerRegistry().getPlayers().remove(p.getUniqueId()), 1);
 
         String worldName = p.getWorld().getName();
         WorldReader reader = new WorldReader(worldName);

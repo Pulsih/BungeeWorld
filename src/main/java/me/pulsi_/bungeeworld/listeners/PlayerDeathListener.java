@@ -30,8 +30,6 @@ public class PlayerDeathListener implements Listener {
         WorldReader reader = new WorldReader(world.getName());
         ActionProcessor.executeActions(p, reader.getActionsOnDeath());
 
-        Bukkit.getScheduler().runTaskLater(BungeeWorld.INSTANCE, () -> Storage.updateCurrentStatistic(p), 1L);
-
         String deathMessage;
         Player killer = e.getEntity().getKiller();
         if (killer == null) deathMessage = reader.getDeathMessage1();
