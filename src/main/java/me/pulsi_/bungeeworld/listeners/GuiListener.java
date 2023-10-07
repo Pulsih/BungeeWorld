@@ -2,7 +2,7 @@ package me.pulsi_.bungeeworld.listeners;
 
 import me.pulsi_.bungeeworld.BungeeWorld;
 import me.pulsi_.bungeeworld.actions.ActionProcessor;
-import me.pulsi_.bungeeworld.managers.ConfigManager;
+import me.pulsi_.bungeeworld.managers.BWConfigs;
 import me.pulsi_.bungeeworld.managers.GuiManager;
 import me.pulsi_.bungeeworld.utils.BWChat;
 import org.bukkit.configuration.ConfigurationSection;
@@ -31,8 +31,8 @@ public class GuiListener implements Listener {
         String identifier = GuiManager.openedInventory.get(p);
         if (identifier == null) return;
 
-        ConfigManager manager = BungeeWorld.INSTANCE.getConfigs();
-        FileConfiguration guis = manager.getConfig(ConfigManager.Type.GUIS);
+        BWConfigs manager = BungeeWorld.INSTANCE.getConfigs();
+        FileConfiguration guis = manager.getConfig(BWConfigs.Type.GUIS);
 
         ConfigurationSection items = guis.getConfigurationSection(identifier + ".items");
         if (items == null) return;

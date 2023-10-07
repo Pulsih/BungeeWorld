@@ -1,7 +1,7 @@
 package me.pulsi_.bungeeworld.values.configs;
 
 import me.pulsi_.bungeeworld.BungeeWorld;
-import me.pulsi_.bungeeworld.managers.ConfigManager;
+import me.pulsi_.bungeeworld.managers.BWConfigs;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class ConfigValues {
@@ -43,7 +43,7 @@ public class ConfigValues {
     boolean isolateChat, isolateEffects, isolateEnderchests, isolateGamemode, isolateHealth, isolateHunger, isolateInventories;
 
     public void loadValues() {
-        FileConfiguration config = BungeeWorld.INSTANCE.getConfigs().getConfig(ConfigManager.Type.CONFIG);
+        FileConfiguration config = BungeeWorld.INSTANCE.getConfigs().getConfig(BWConfigs.Type.CONFIG.name);
         
         hubName = config.getString("hub.name");
         hubSpawn = config.getString("hub.spawn");

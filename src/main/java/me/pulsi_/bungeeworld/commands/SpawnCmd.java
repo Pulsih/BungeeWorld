@@ -1,8 +1,8 @@
 package me.pulsi_.bungeeworld.commands;
 
-import me.pulsi_.bungeeworld.managers.BWMessages;
+import me.pulsi_.bungeeworld.utils.BWMessages;
 import me.pulsi_.bungeeworld.utils.BWUtils;
-import me.pulsi_.bungeeworld.worlds.WorldReader;
+import me.pulsi_.bungeeworld.registry.WorldReader;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

@@ -1,10 +1,8 @@
 package me.pulsi_.bungeeworld;
 
-import me.pulsi_.bungeeworld.managers.ConfigManager;
-import me.pulsi_.bungeeworld.managers.DataManager;
-import me.pulsi_.bungeeworld.players.PlayerRegistry;
-import me.pulsi_.bungeeworld.utils.BWLogger;
-import me.pulsi_.bungeeworld.worlds.WorldsRegistry;
+import me.pulsi_.bungeeworld.managers.BWConfigs;
+import me.pulsi_.bungeeworld.managers.BWData;
+import me.pulsi_.bungeeworld.registry.WorldsRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -13,50 +11,40 @@ public final class BungeeWorld extends JavaPlugin {
     public static BungeeWorld INSTANCE;
 
     private boolean placeholderApiHooked;
-    private PlayerRegistry playerRegistry;
     private WorldsRegistry worldsRegistry;
-    private DataManager dataManager;
-    private ConfigManager configManager;
+    private BWData data;
+    private BWConfigs configs;
 
     @Override
     public void onEnable() {
         INSTANCE = this;
 
         Bukkit.getScheduler().runTaskLater(this, () -> {
-            dataManager = new DataManager(this);
-            configManager = new ConfigManager(this);
-            playerRegistry = new PlayerRegistry();
+            data = new BWData(this);
+            configs = new BWConfigs(this);
             worldsRegistry = new WorldsRegistry();
 
-            dataManager.setupPlugin();
+            data.setupPlugin();
 
             placeholderApiHooked = Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null;
-        }, 1l);
+        }, 1L);
     }
 
     @Override
     public void onDisable() {
-        INSTANCE = this;
-
-        BWLogger.log("");
-        BWLogger.log("    &2&lBungee&a&lWorld &cDisabling plugin...");
-        BWLogger.log("");
-    }
-
-    public PlayerRegistry getPlayerRegistry() {
-        return playerRegistry;
+        data.shutdownPlugin();
     }
 
     public WorldsRegistry getWorldsRegistry() {
         return worldsRegistry;
     }
 
-    public DataManager getDataManager() {
-        return dataManager;
+    public BWData getDataManager() {
+        return data;
     }
 
-    public ConfigManager getConfigs() {
-        return configManager;
+    public BWConfigs getConfigs() {
+        return configs;
     }
 
     public boolean isPlaceholderApiHooked() {

@@ -24,7 +24,7 @@ public class ItemManager {
         itemsName.clear();
         itemsList.clear();
 
-        FileConfiguration items = BungeeWorld.INSTANCE.getConfigs().getConfig(ConfigManager.Type.ITEMS);
+        FileConfiguration items = BungeeWorld.INSTANCE.getConfigs().getConfig(BWConfigs.Type.ITEMS);
         ConfigurationSection section = items.getConfigurationSection("");
         if (section == null) return;
 
@@ -62,7 +62,7 @@ public class ItemManager {
         List<String> nullList = new ArrayList<>();
         if (item.getType().equals(Material.AIR) || !item.hasItemMeta()) return nullList;
 
-        FileConfiguration items = BungeeWorld.INSTANCE.getConfigs().getConfig(ConfigManager.Type.ITEMS);
+        FileConfiguration items = BungeeWorld.INSTANCE.getConfigs().getConfig(BWConfigs.Type.ITEMS);
         ConfigurationSection section = items.getConfigurationSection("");
         if (section == null) return nullList;
 

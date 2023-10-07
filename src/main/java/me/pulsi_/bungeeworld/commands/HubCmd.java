@@ -1,6 +1,6 @@
 package me.pulsi_.bungeeworld.commands;
 
-import me.pulsi_.bungeeworld.managers.BWMessages;
+import me.pulsi_.bungeeworld.utils.BWMessages;
 import me.pulsi_.bungeeworld.utils.BWUtils;
 import me.pulsi_.bungeeworld.values.Values;
 import org.bukkit.Location;

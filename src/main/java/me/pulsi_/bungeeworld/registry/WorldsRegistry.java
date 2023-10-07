@@ -1,7 +1,7 @@
-package me.pulsi_.bungeeworld.worlds;
+package me.pulsi_.bungeeworld.registry;
 
 import me.pulsi_.bungeeworld.BungeeWorld;
-import me.pulsi_.bungeeworld.managers.ConfigManager;
+import me.pulsi_.bungeeworld.managers.BWConfigs;
 import me.pulsi_.bungeeworld.values.Values;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -23,7 +23,7 @@ public class WorldsRegistry {
     public void loadWorlds() {
         worlds.clear();
 
-        FileConfiguration config = BungeeWorld.INSTANCE.getConfigs().getConfig(ConfigManager.Type.WORLDS);
+        FileConfiguration config = BungeeWorld.INSTANCE.getConfigs().getConfig(BWConfigs.Type.WORLDS);
         ConfigurationSection section = config.getConfigurationSection("");
         if (section == null) return;
 
@@ -33,7 +33,6 @@ public class WorldsRegistry {
 
         boolean save = false;
         for (String worldName : worldNames) {
-
             if (!section.getKeys(false).contains(worldName)) {
                 registerWorld(worldName, config);
                 save = true;
@@ -44,7 +43,7 @@ public class WorldsRegistry {
 
             worlds.put(worldName, world);
         }
-        if (save) BungeeWorld.INSTANCE.getConfigs().saveConfig(ConfigManager.Type.WORLDS, true);
+        if (save) BungeeWorld.INSTANCE.getConfigs().saveConfig(BWConfigs.Type.WORLDS, true);
     }
 
     public void registerWorld(String worldName, FileConfiguration config) {
@@ -77,12 +76,12 @@ public class WorldsRegistry {
     }
 
     public void setupWorld(BWWorld world) {
-        FileConfiguration config = BungeeWorld.INSTANCE.getConfigs().getConfig(ConfigManager.Type.WORLDS);
-        String worldName = world.name;
+        FileConfiguration config = BungeeWorld.INSTANCE.getConfigs().getConfig(BWConfigs.Type.WORLDS);
+        String worldName = world.getName();
 
-        world.spawn = config.getString(worldName + ".spawn");
-        world.teleportToLastLocation = config.getBoolean(worldName + ".teleport-to-last-location");
-        world.teleportToSpawnOnJoin = config.getBoolean(worldName + ".teleport-to-spawn-on-join");
+        world.setSpawn(config.getString(worldName + ".spawn"));
+        world.setTeleportToLastLocation(config.getBoolean(worldName + ".teleport-to-last-location"));
+        world.setTeleportToSpawnOnJoin(config.getBoolean(worldName + ".teleport-to-spawn-on-join"));
 
         BWSecurity security = new BWSecurity();
         security.denyMessage = config.getString(worldName + ".security.deny-message");
@@ -96,7 +95,7 @@ public class WorldsRegistry {
         security.disabledFallDamage = config.getBoolean(worldName + ".security.disable-fall-damage");
         security.disabledPvP = config.getBoolean(worldName + ".security.disable-pvp");
 
-        world.security = security;
+        world.setSecurity(security);
 
         world.denyCommandsMessage = config.getString(worldName + ".denied-commands.deny-message");
         world.denyCommandsStartsWith = config.getStringList(worldName + ".denied-commands.starts-with");
@@ -113,12 +112,16 @@ public class WorldsRegistry {
         world.linkedWorlds = config.getStringList(worldName + ".linked-worlds");
     }
 
+    public void saveAllPlayerStatistics() {
+
+    }
+
     public void setValue(World world, String path, Object value) {
-        ConfigManager configManager = BungeeWorld.INSTANCE.getConfigs();
-        FileConfiguration worldsConfig = configManager.getConfig(ConfigManager.Type.WORLDS);
+        BWConfigs BWConfigs = BungeeWorld.INSTANCE.getConfigs();
+        FileConfiguration worldsConfig = BWConfigs.getConfig(BWConfigs.Type.WORLDS);
 
         worldsConfig.set(world.getName() + "." + path, value);
-        configManager.saveConfig(ConfigManager.Type.WORLDS, true);
+        BWConfigs.saveConfig(BWConfigs.Type.WORLDS, true);
         loadWorlds();
     }
 }

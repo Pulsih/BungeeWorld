@@ -1,6 +1,6 @@
 package me.pulsi_.bungeeworld.listeners;
 
-import me.pulsi_.bungeeworld.worlds.WorldReader;
+import me.pulsi_.bungeeworld.registry.WorldReader;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

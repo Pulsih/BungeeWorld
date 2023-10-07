@@ -2,12 +2,11 @@ package me.pulsi_.bungeeworld.listeners;
 
 import me.pulsi_.bungeeworld.BungeeWorld;
 import me.pulsi_.bungeeworld.actions.ActionProcessor;
+import me.pulsi_.bungeeworld.registry.PlayerUtils;
 import me.pulsi_.bungeeworld.utils.BWChat;
 import me.pulsi_.bungeeworld.utils.BWUtils;
 import me.pulsi_.bungeeworld.values.Values;
-import me.pulsi_.bungeeworld.worldSeparator.Storage;
-import me.pulsi_.bungeeworld.worldSeparator.managers.LastLocationManager;
-import me.pulsi_.bungeeworld.worlds.WorldReader;
+import me.pulsi_.bungeeworld.registry.WorldReader;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -34,7 +33,9 @@ public class WorldChangeListener implements Listener {
         if (Values.CONFIG.isClearChat()) BWUtils.clearChat(p);
 
         if (!isLinked) {
-            Storage.switchStatistics(p, fromWorldName);
+            PlayerUtils playerUtils = new PlayerUtils(p);
+            playerUtils.storeStatistics(fromWorldName);
+            playerUtils.loadStatistics(newWorldName);
 
             if (Values.CONFIG.isIsolateChat()) {
                 quitMessage(p, fromWorld);
@@ -42,10 +43,10 @@ public class WorldChangeListener implements Listener {
             }
         }
 
-        ActionProcessor.executeActions(p, prevReader.getActionsOnQuit());
+        ActionProcessor.executeActions(p, prevReader.getWorld().getActionsOnQuit());
 
         WorldReader reader = new WorldReader(newWorldName);
-        Bukkit.getScheduler().runTaskLater(BungeeWorld.INSTANCE, () -> ActionProcessor.executeActions(p, reader.getActionsOnJoin()), 4L);
+        Bukkit.getScheduler().runTaskLater(BungeeWorld.INSTANCE, () -> ActionProcessor.executeActions(p, reader.getWorld().getActionsOnJoin()), 5L);
     }
 
     @EventHandler
@@ -54,12 +55,12 @@ public class WorldChangeListener implements Listener {
         Location from = e.getFrom();
 
         Bukkit.getScheduler().runTaskLater(BungeeWorld.INSTANCE, () -> {
-            if (from.getWorld().getName().equals(p.getWorld().getName())) return;
+            World fromW = from.getWorld();
+            if (fromW == null) return;
 
-            LastLocationManager lastLocationManager = new LastLocationManager(p);
-            lastLocationManager.saveLastLocationToFile(from);
-            lastLocationManager.loadLastLocationsToHashMap();
-        }, 0l);
+            String fromN = fromW.getName();
+            if (!fromN.equals(p.getWorld().getName())) new PlayerUtils(p).storeLastLocation(from, fromN);
+        }, 1L);
     }
 
     private void joinMessage(Player p, World world) {

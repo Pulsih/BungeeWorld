@@ -1,14 +1,14 @@
 package me.pulsi_.bungeeworld.commands;
 
 import me.pulsi_.bungeeworld.BungeeWorld;
-import me.pulsi_.bungeeworld.managers.BWMessages;
-import me.pulsi_.bungeeworld.managers.ConfigManager;
+import me.pulsi_.bungeeworld.utils.BWMessages;
+import me.pulsi_.bungeeworld.managers.BWConfigs;
 import me.pulsi_.bungeeworld.managers.ItemManager;
 import me.pulsi_.bungeeworld.utils.BWChat;
 import me.pulsi_.bungeeworld.utils.BWUtils;
 import me.pulsi_.bungeeworld.values.Values;
-import me.pulsi_.bungeeworld.worlds.WorldReader;
-import me.pulsi_.bungeeworld.worlds.WorldsRegistry;
+import me.pulsi_.bungeeworld.registry.WorldReader;
+import me.pulsi_.bungeeworld.registry.WorldsRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -120,10 +120,11 @@ public class MainCmd implements CommandExecutor, TabCompleter {
                 WorldReader reader = new WorldReader(destination.getName());
 
                 Location loc;
-                if (reader.teleportToLastLocation()) {
+                if (!reader.getWorld().isTeleportToLastLocation()) loc = BWUtils.getLocation(reader.getSpawn());
+                else {
                     loc = BungeeWorld.INSTANCE.getPlayerRegistry().getPlayers().get(target.getUniqueId()).locations.get(destination.getName());
                     if (loc == null) loc = BWUtils.getLocation(reader.getSpawn());
-                } else loc = BWUtils.getLocation(reader.getSpawn());
+                }
 
                 if (loc != null) target.teleport(loc);
                 else target.teleport(destination.getSpawnLocation());
@@ -229,14 +230,14 @@ public class MainCmd implements CommandExecutor, TabCompleter {
                 if (!BWUtils.hasPermissions(s, "bungeeworld.sethub") || !BWUtils.isPlayer(s)) return false;
 
                 Player p = (Player)s;
-                ConfigManager configManager = BungeeWorld.INSTANCE.getConfigs();
-                FileConfiguration config = configManager.getConfig(ConfigManager.Type.CONFIG);
+                BWConfigs BWConfigs = BungeeWorld.INSTANCE.getConfigs();
+                FileConfiguration config = BWConfigs.getConfig(BWConfigs.Type.CONFIG);
                 config.set("hub.spawn", BWUtils.getStringLocation(p.getLocation()));
                 config.set("hub.name", p.getWorld().getName());
 
-                configManager.saveConfig(ConfigManager.Type.CONFIG, false);
-                configManager.reloadConfig(ConfigManager.Type.CONFIG);
-                configManager.buildConfig();
+                BWConfigs.saveConfig(BWConfigs.Type.CONFIG, false);
+                BWConfigs.reloadConfig(BWConfigs.Type.CONFIG);
+                BWConfigs.buildConfig();
                 Values.CONFIG.loadValues();
 
                 BWMessages.send(p, "hub_set");
@@ -247,10 +248,10 @@ public class MainCmd implements CommandExecutor, TabCompleter {
                 if (!BWUtils.hasPermissions(s, "bungeeworld.setspawn") || !BWUtils.isPlayer(s)) return false;
 
                 Player p = (Player) s;
-                ConfigManager configManager = BungeeWorld.INSTANCE.getConfigs();
-                FileConfiguration worlds = configManager.getConfig(ConfigManager.Type.WORLDS);
+                BWConfigs BWConfigs = BungeeWorld.INSTANCE.getConfigs();
+                FileConfiguration worlds = BWConfigs.getConfig(BWConfigs.Type.WORLDS);
                 worlds.set(p.getWorld().getName() + ".spawn", BWUtils.getStringLocation(p.getLocation()));
-                configManager.saveConfig(ConfigManager.Type.WORLDS, true);
+                BWConfigs.saveConfig(BWConfigs.Type.WORLDS, true);
 
                 BWMessages.send(p, "spawn_set");
                 return true;

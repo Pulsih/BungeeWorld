@@ -1,5 +1,5 @@
 name: BungeeWorld
-version: 1.4
+version: ${version}
 main: me.pulsi_.bungeeworld.BungeeWorld
 api-version: 1.13
 load: POSTWORLD

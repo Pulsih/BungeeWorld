@@ -1,6 +1,5 @@
 package me.pulsi_.bungeeworld.utils;
 
-import me.pulsi_.bungeeworld.managers.BWMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;

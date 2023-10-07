@@ -1,4 +1,4 @@
-package me.pulsi_.bungeeworld.worlds;
+package me.pulsi_.bungeeworld.registry;
 
 public class BWSecurity {
 

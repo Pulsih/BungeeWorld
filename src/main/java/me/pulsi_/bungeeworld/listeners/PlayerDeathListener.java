@@ -1,11 +1,9 @@
 package me.pulsi_.bungeeworld.listeners;
 
-import me.pulsi_.bungeeworld.BungeeWorld;
 import me.pulsi_.bungeeworld.actions.ActionProcessor;
 import me.pulsi_.bungeeworld.utils.BWChat;
 import me.pulsi_.bungeeworld.values.Values;
-import me.pulsi_.bungeeworld.worldSeparator.Storage;
-import me.pulsi_.bungeeworld.worlds.WorldReader;
+import me.pulsi_.bungeeworld.registry.WorldReader;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;

@@ -8,14 +8,15 @@ import me.pulsi_.bungeeworld.external.UpdateChecker;
 import me.pulsi_.bungeeworld.external.bStats;
 import me.pulsi_.bungeeworld.listeners.*;
 import me.pulsi_.bungeeworld.utils.BWLogger;
+import me.pulsi_.bungeeworld.utils.BWMessages;
 import me.pulsi_.bungeeworld.values.Values;
 import org.bukkit.plugin.PluginManager;
 
-public class DataManager {
+public class BWData {
 
     private final BungeeWorld plugin;
     
-    public DataManager(BungeeWorld plugin) {
+    public BWData(BungeeWorld plugin) {
         this.plugin = plugin;
     }
     
@@ -24,7 +25,7 @@ public class DataManager {
         long time;
 
         BWLogger.log("");
-        BWLogger.log("    &2&lBungee&a&lWorld &2Enabling plugin...");
+        BWLogger.log("    %prefix% &2Enabling plugin...");
         BWLogger.log("    &aRunning on version &f" + plugin.getDescription().getVersion() + "&a!");
 
         time = System.currentTimeMillis();
@@ -43,15 +44,14 @@ public class DataManager {
         BWLogger.log("");
     }
 
-    public void reloadPlugin() {
-        ConfigManager configs = plugin.getConfigs();
+    public void shutdownPlugin() {
+        BWLogger.log("");
+        BWLogger.log("    %prefix% &cDisabling plugin...");
+        BWLogger.log("");
+    }
 
-        plugin.getConfigs().createConfigs();
-        configs.reloadConfig(ConfigManager.Type.CONFIG);
-        configs.reloadConfig(ConfigManager.Type.GUIS);
-        configs.reloadConfig(ConfigManager.Type.ITEMS);
-        configs.reloadConfig(ConfigManager.Type.MESSAGES);
-        configs.reloadConfig(ConfigManager.Type.WORLDS);
+    public void reloadPlugin() {
+        plugin.getConfigs().setupConfigs();
         Values.CONFIG.loadValues();
         BWMessages.loadMessages();
         plugin.getWorldsRegistry().loadWorlds();

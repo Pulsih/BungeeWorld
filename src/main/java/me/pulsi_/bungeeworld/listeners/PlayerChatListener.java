@@ -1,7 +1,7 @@
 package me.pulsi_.bungeeworld.listeners;
 
 import me.pulsi_.bungeeworld.values.Values;
-import me.pulsi_.bungeeworld.worlds.WorldReader;
+import me.pulsi_.bungeeworld.registry.WorldReader;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;

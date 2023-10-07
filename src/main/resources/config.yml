@@ -1,0 +1,99 @@
+# Configuration File of BungeeWorld
+# Made by Pulsi_, Version v1.4
+
+# Check for new updates of the plugin.
+update-checker: true
+
+# The hub settings.
+hub:
+  # Choose if a player will be teleported
+  # to the hub spawn when joining.
+  teleport-when-join: true
+
+  # The sound played when teleporting to the hub.
+  # ( SOUND_TYPE VOLUME PITCH )
+  teleport-sound: ENTITY_ENDERMAN_TELEPORT 5 1
+
+# The actions that will be executed when a player join.
+join-settings:
+  title:
+    send: true
+    # Use the , to separate title from subtitle.
+    text: '&2&lWelcome!,&7Have fun &a&n%player%&7!'
+
+  # Play a sound then the player joins.
+  sound:
+    play: true
+    sound-type: ENTITY_PLAYER_LEVELUP 5 1
+
+server-settings:
+  # Enable to deny to players commands
+  # like "/plugin:command"
+  deny-dots-commands: true
+
+  # Choose if the chat is divided world-by-world
+  # or just use the normal server chat.
+  isolate-chat: true
+
+  # This will separate potion effects between worlds.
+  isolate-effects: true
+
+  # This will separate the enderchests between worlds.
+  isolate-enderchests: true
+
+  # This will separate the gamemode between worlds.
+  isolate-gamemode: true
+
+  # This will separate the health between worlds.
+  isolate-health: true
+
+  # This will separate the hunger between worlds.
+  isolate-hunger: true
+
+  # This will separate inventory between worlds.
+  isolate-inventories: true
+
+  # Enable this option to save the player
+  # stats every time he switch world.
+  # This is used to avoid any data lost in
+  # case the server crash. (Not Recommended)
+  save-statistics-on-world-change: false
+
+  # Clear the player chat when switching world.
+  clear-chat: true
+
+  # Warning! Edit this value in worlds.yml,
+  # this is used to register a new world with
+  # that messages instead of a null one.
+  # - The message showed when a player die.
+  death-message: '&a%player% &cdied.'
+
+  # Warning! Edit this value in worlds.yml,
+  # this is used to register a new world with
+  # that messages instead of a null one.
+  # - The message showed when a player gets
+  #   killed from another one.
+  killer-death-message: '&a%player% &chas been killed by &a%killer%'
+
+  # Warning! Edit this value in worlds.yml,
+  # this is used to register a new world with
+  # that messages instead of a null one.
+  # - The message showed when a player gets
+  #   killed from another one with a weapon.
+  killer-weapon-death-message: '&a%player% &chas been killed by &a%killer% &cwith
+    %item%'
+
+  # Warning! Edit this value in worlds.yml,
+  # this is used to register a new world with
+  # that messages instead of a null one.
+  # - Message showed when a player join
+  # the server / another world.
+  join-message: '&8[&a+&8] &a%player%'
+
+  # Warning! Edit this value in worlds.yml,
+  # this is used to register a new world with
+  #  that messages instead of a null one.
+  # - Message showed when a player quit
+  # the server / another world.
+  quit-message: '&8[&c-&8] &a%player%'
+

@@ -3,6 +3,7 @@ package me.pulsi_.bungeeworld.managers;
 import me.pulsi_.bungeeworld.BungeeWorld;
 import me.pulsi_.bungeeworld.utils.BWChat;
 import me.pulsi_.bungeeworld.utils.BWLogger;
+import me.pulsi_.bungeeworld.utils.BWMessages;
 import me.pulsi_.bungeeworld.utils.ItemCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -37,8 +38,8 @@ public class GuiManager implements InventoryHolder {
     }
 
     public void loadGuis() {
-        ConfigManager manager = BungeeWorld.INSTANCE.getConfigs();
-        FileConfiguration guis = manager.getConfig(ConfigManager.Type.GUIS);
+        BWConfigs manager = BungeeWorld.INSTANCE.getConfigs();
+        FileConfiguration guis = manager.getConfig(BWConfigs.Type.GUIS);
 
         guisIdentifier.clear();
 
