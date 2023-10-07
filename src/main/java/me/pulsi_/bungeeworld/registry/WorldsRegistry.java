@@ -8,6 +8,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,11 @@ import java.util.List;
 public class WorldsRegistry {
 
     private final HashMap<String, BWWorld> worlds = new HashMap<>();
+    private final BungeeWorld plugin;
+
+    public WorldsRegistry(BungeeWorld plugin) {
+        this.plugin = plugin;
+    }
 
     public HashMap<String, BWWorld> getWorlds() {
         return worlds;
@@ -23,13 +29,27 @@ public class WorldsRegistry {
     public void loadWorlds() {
         worlds.clear();
 
-        FileConfiguration config = BungeeWorld.INSTANCE.getConfigs().getConfig(BWConfigs.Type.WORLDS);
-        ConfigurationSection section = config.getConfigurationSection("");
-        if (section == null) return;
+        File worldFilesFolder = new File(plugin.getDataFolder(), "worlds");
+        if (!worldFilesFolder.exists()) worldFilesFolder.getParentFile().mkdirs();
+
+        File[] worldFiles = worldFilesFolder.listFiles();
+        if (worldFiles == null || worldFiles.length == 0) return;
 
         List<String> worldNames = new ArrayList<>();
         for (World world : Bukkit.getWorlds())
             worldNames.add(world.getName());
+
+        for (String worldName : worldNames) {
+            File worldFile = new File(plugin.getDataFolder(), "worlds" + File.separator + worldName);
+
+            BWWorld world = new BWWorld(worldName);
+
+            if (!worldFile.exists()) {
+
+            }
+
+            setupWorld(world);
+        }
 
         boolean save = false;
         for (String worldName : worldNames) {
@@ -97,19 +117,19 @@ public class WorldsRegistry {
 
         world.setSecurity(security);
 
-        world.denyCommandsMessage = config.getString(worldName + ".denied-commands.deny-message");
-        world.denyCommandsStartsWith = config.getStringList(worldName + ".denied-commands.starts-with");
-        world.denyCommandsSingle = config.getStringList(worldName + ".denied-commands.single-command");
-        world.actionsOnJoin = config.getStringList(worldName + ".actions-on-join");
-        world.actionsOnQuit = config.getStringList(worldName + ".actions-on-quit");
-        world.actionsOnDeath = config.getStringList(worldName + ".actions-on-death");
-        world.actionsOnRespawn = config.getStringList(worldName + ".actions-on-respawn");
-        world.deathMessage = config.getString(worldName + ".death-message");
-        world.killerDeathMessage = config.getString(worldName + ".killer-death-message");
-        world.killerWeaponDeathMessage = config.getString(worldName + ".killer-weapon-death-message");
-        world.joinMessage = config.getString(worldName + ".join-message");
-        world.quitMessage = config.getString(worldName + ".quit-message");
-        world.linkedWorlds = config.getStringList(worldName + ".linked-worlds");
+        world.setDenyCommandsMessage(config.getString(worldName + ".denied-commands.deny-message"));
+        world.setDenyCommandsStartsWith(config.getStringList(worldName + ".denied-commands.starts-with"));
+        world.setDenyCommandsSingle(config.getStringList(worldName + ".denied-commands.single-command"));
+        world.setActionsOnJoin(config.getStringList(worldName + ".actions-on-join"));
+        world.setActionsOnQuit(config.getStringList(worldName + ".actions-on-quit"));
+        world.setActionsOnDeath(config.getStringList(worldName + ".actions-on-death"));
+        world.setActionsOnRespawn(config.getStringList(worldName + ".actions-on-respawn"));
+        world.setDeathMessage(config.getString(worldName + ".death-message"));
+        world.setKillerDeathMessage(config.getString(worldName + ".killer-death-message"));
+        world.setKillerWeaponDeathMessage(config.getString(worldName + ".killer-weapon-death-message"));
+        world.setJoinMessage(config.getString(worldName + ".join-message"));
+        world.setQuitMessage(config.getString(worldName + ".quit-message"));
+        world.setLinkedWorlds(config.getStringList(worldName + ".linked-worlds"));
     }
 
     public void saveAllPlayerStatistics() {

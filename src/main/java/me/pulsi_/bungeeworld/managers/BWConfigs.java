@@ -101,6 +101,10 @@ public class BWConfigs {
         return YamlConfiguration.loadConfiguration(getFile(path));
     }
 
+    public void saveConfig(String fileName) {
+
+    }
+
     public void setupFile(Type type, boolean backup) {
         String fileName = type.name;
         File folderFile = getFile(type.name);
