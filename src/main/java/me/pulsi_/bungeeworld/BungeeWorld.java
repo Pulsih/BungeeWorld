@@ -22,7 +22,7 @@ public final class BungeeWorld extends JavaPlugin {
         Bukkit.getScheduler().runTaskLater(this, () -> {
             data = new BWData(this);
             configs = new BWConfigs(this);
-            worldsRegistry = new WorldsRegistry();
+            worldsRegistry = new WorldsRegistry(this);
 
             data.setupPlugin();
 
@@ -39,7 +39,7 @@ public final class BungeeWorld extends JavaPlugin {
         return worldsRegistry;
     }
 
-    public BWData getDataManager() {
+    public BWData getData() {
         return data;
     }
 

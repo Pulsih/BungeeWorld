@@ -50,14 +50,20 @@ public class BWData {
         BWLogger.log("");
     }
 
-    public void reloadPlugin() {
-        plugin.getConfigs().setupConfigs();
-        Values.CONFIG.loadValues();
-        BWMessages.loadMessages();
-        plugin.getWorldsRegistry().loadWorlds();
+    public boolean reloadPlugin() {
+        try {
+            plugin.getConfigs().setupConfigs();
+            Values.CONFIG.loadValues();
+            BWMessages.loadMessages();
+            plugin.getWorldsRegistry().loadWorlds();
 
-        ItemManager.loadItems();
-        new GuiManager().loadGuis();
+            ItemManager.loadItems();
+            new GuiManager().loadGuis();
+            return true;
+        } catch (Exception e) {
+            BWLogger.warn(e, "Something went wrong while reloading the plugin.");
+            return false;
+        }
     }
 
     private void registerCommands() {
@@ -81,9 +87,9 @@ public class BWData {
         plManager.registerEvents(new PlayerDeathListener(), plugin);
         plManager.registerEvents(new PlayerDropListener(), plugin);
         plManager.registerEvents(new PlayerInteractListener(), plugin);
-        plManager.registerEvents(new PlayerJoinListener(), plugin);
+        plManager.registerEvents(new PlayerJoinListener(plugin), plugin);
         plManager.registerEvents(new PlayerPickupListener(), plugin);
-        plManager.registerEvents(new PlayerQuitListener(), plugin);
+        plManager.registerEvents(new PlayerQuitListener(plugin), plugin);
         plManager.registerEvents(new PlayerRespawnListener(), plugin);
         plManager.registerEvents(new WorldChangeListener(), plugin);
         plManager.registerEvents(new UpdateChecker(plugin), plugin);

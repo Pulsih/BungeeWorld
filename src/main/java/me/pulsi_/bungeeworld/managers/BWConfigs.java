@@ -97,6 +97,10 @@ public class BWConfigs {
         return getConfig(type.name);
     }
 
+    public FileConfiguration getConfig(File file) {
+        return YamlConfiguration.loadConfiguration(file);
+    }
+
     public FileConfiguration getConfig(String path) {
         return YamlConfiguration.loadConfiguration(getFile(path));
     }

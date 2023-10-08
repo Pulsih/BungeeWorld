@@ -2,12 +2,9 @@ package me.pulsi_.bungeeworld.listeners;
 
 import me.pulsi_.bungeeworld.BungeeWorld;
 import me.pulsi_.bungeeworld.actions.ActionProcessor;
-import me.pulsi_.bungeeworld.registry.BWPlayer;
-import me.pulsi_.bungeeworld.utils.BWChat;
+import me.pulsi_.bungeeworld.registry.*;
 import me.pulsi_.bungeeworld.utils.BWUtils;
 import me.pulsi_.bungeeworld.values.Values;
-import me.pulsi_.bungeeworld.worldSeparator.Storage;
-import me.pulsi_.bungeeworld.registry.WorldReader;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -17,70 +14,51 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.util.List;
-
 public class PlayerJoinListener implements Listener {
+
+    private final WorldsRegistry registry;
+
+    public PlayerJoinListener(BungeeWorld plugin) {
+        this.registry = plugin.getWorldsRegistry();
+    }
 
     @EventHandler (priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent e) {
         e.setJoinMessage(null);
 
         Player p = e.getPlayer();
-        BWPlayer bwP = BungeeWorld.INSTANCE.getPlayerRegistry().registerPlayer(p);
-
         if (Values.CONFIG.isClearChat()) BWUtils.clearChat(p);
 
-        String worldName = p.getWorld().getName();
-        boolean load = true, tpSpawn = true;
+        World world = p.getWorld();
+        String worldName = world.getName();
+        boolean tpSpawn = true;
+
         if (Values.CONFIG.isTeleportHubWhenJoin() && !worldName.equals(Values.CONFIG.getHubName())) {
             Location hub = BWUtils.getLocation(Values.CONFIG.getHubSpawn());
             if (hub != null) {
                 p.teleport(hub);
-                worldName = p.getWorld().getName();
 
-                load = false;
+                world = p.getWorld();
+                worldName = world.getName();
+
                 tpSpawn = false;
             }
         }
 
-        if (load) Storage.updateAllStatistic(p);
+        registry.loadAllPlayerStatistics(p);
+        PlayerUtils playerUtils = new PlayerUtils(p);
+        playerUtils.loadStatistics(worldName);
 
-        if (!bwP.config.getConfigurationSection("").contains(worldName))
-            Storage.saveAllPlayerStatistics(p);
+        BWWorld bwWorld = registry.getWorlds().get(worldName);
+        Bukkit.getScheduler().runTaskLater(BungeeWorld.INSTANCE, () -> ActionProcessor.executeActions(p, bwWorld.getActionsOnJoin()), 5L);
 
-        WorldReader reader = new WorldReader(worldName);
-        Bukkit.getScheduler().runTaskLater(BungeeWorld.INSTANCE, () -> ActionProcessor.executeActions(p, reader.getActionsOnJoin()), 4L);
-
-        if (reader.teleportToSpawnOnJoin() && tpSpawn) {
-            Location spawn = BWUtils.getLocation(reader.getSpawn());
+        if (bwWorld.isTeleportToSpawnOnJoin() && tpSpawn) {
+            Location spawn = BWUtils.getLocation(bwWorld.getSpawn());
             if (spawn != null) p.teleport(spawn);
         }
 
         if (Values.CONFIG.isJoinSendTitle()) BWUtils.sendTitle(p, Values.CONFIG.getJoinTitle());
         if (Values.CONFIG.isJoinPlaySound()) BWUtils.playSound(p, Values.CONFIG.getJoinSound());
-
-        String joinMessage = reader.getJoinMessage();
-        if (joinMessage == "") return;
-
-        String message = BWChat.color(joinMessage.replace("%player%", p.getName()));
-        if (!Values.CONFIG.isIsolateChat()) Bukkit.broadcastMessage(message);
-        else {
-            for (Player player : p.getWorld().getPlayers()) {
-                if (!player.equals(p)) player.sendMessage(message);
-            }
-
-            List<String> linkedWorldsNames = reader.getLinkedWorlds();
-            if (linkedWorldsNames.isEmpty()) return;
-
-            for (String linkedWorldName : linkedWorldsNames) {
-                if (linkedWorldName.equals(worldName)) continue;
-
-                World linkedWorld = Bukkit.getWorld(linkedWorldName);
-                if (linkedWorld == null) continue;
-
-                for (Player players : linkedWorld.getPlayers())
-                    players.sendMessage(joinMessage);
-            }
-        }
+        playerUtils.joinMessage(world);
     }
 }

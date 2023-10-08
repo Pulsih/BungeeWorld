@@ -1,6 +1,7 @@
 package me.pulsi_.bungeeworld.commands;
 
 import me.pulsi_.bungeeworld.BungeeWorld;
+import me.pulsi_.bungeeworld.registry.PlayerUtils;
 import me.pulsi_.bungeeworld.utils.BWMessages;
 import me.pulsi_.bungeeworld.managers.BWConfigs;
 import me.pulsi_.bungeeworld.managers.ItemManager;
@@ -27,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class MainCmd implements CommandExecutor, TabCompleter {
+
 
     public boolean onCommand(CommandSender s, Command command, String label, String[] args) {
         if (args.length == 0) {
@@ -106,7 +108,7 @@ public class MainCmd implements CommandExecutor, TabCompleter {
                 }
 
                 Player target = Bukkit.getPlayerExact(args[1]);
-                if (target == null || !BungeeWorld.INSTANCE.getPlayerRegistry().getPlayers().containsKey(target.getUniqueId())) {
+                if (target == null) {
                     BWMessages.send(s, "invalid_player");
                     return false;
                 }
@@ -117,9 +119,15 @@ public class MainCmd implements CommandExecutor, TabCompleter {
                     return false;
                 }
 
-                WorldReader reader = new WorldReader(destination.getName());
+                WorldReader reader = new WorldReader(destination.getName()).getWorld();
 
                 Location loc;
+
+                if (reader.getWorld().isTeleportToLastLocation()) {
+                    Location lastLocation = new PlayerUtils(p).getBWPlayer();
+                    if (loc == null) loc = BWUtils.getLocation(reader.getSpawn());
+                }
+
                 if (!reader.getWorld().isTeleportToLastLocation()) loc = BWUtils.getLocation(reader.getSpawn());
                 else {
                     loc = BungeeWorld.INSTANCE.getPlayerRegistry().getPlayers().get(target.getUniqueId()).locations.get(destination.getName());
@@ -260,7 +268,7 @@ public class MainCmd implements CommandExecutor, TabCompleter {
             case "reload": {
                 if (!BWUtils.hasPermissions(s, "bungeeworld.setspawn")) return false;
 
-                BungeeWorld.INSTANCE.getDataManager().reloadPlugin();
+                BungeeWorld.INSTANCE.getData().reloadPlugin();
                 BWMessages.send(s, "plugin_reloaded");
                 return true;
             }

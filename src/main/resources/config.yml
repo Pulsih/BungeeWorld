@@ -1,5 +1,5 @@
 # Configuration File of BungeeWorld
-# Made by Pulsi_, Version v1.4
+# Made by Pulsi_, Version v1.5
 
 # Check for new updates of the plugin.
 update-checker: true
@@ -12,33 +12,35 @@ hub:
 
   # The sound played when teleporting to the hub.
   # ( SOUND_TYPE VOLUME PITCH )
-  teleport-sound: ENTITY_ENDERMAN_TELEPORT 5 1
+  teleport-sound: "ENTITY_ENDERMAN_TELEPORT 5 1 MASTER"
 
 # The actions that will be executed when a player join.
 join-settings:
   title:
     send: true
-    # Use the , to separate title from subtitle.
-    text: '&2&lWelcome!,&7Have fun &a&n%player%&7!'
+    # Format: Title;Subtitle;FadeIn;Stay;FadeOut
+    text: '&2&lWelcome!;&7Have fun &a&n%player%&7!'
 
-  # Play a sound then the player joins.
+  # Play a sound when a player joins.
   sound:
     play: true
-    sound-type: ENTITY_PLAYER_LEVELUP 5 1
+    sound-type: "ENTITY_PLAYER_LEVELUP 5 1 MASTER"
 
 server-settings:
-  # Enable to deny to players commands
-  # like "/plugin:command"
+  # Enable to deny player commands like "/plugin:command"
   deny-dots-commands: true
 
-  # Choose if the chat is divided world-by-world
-  # or just use the normal server chat.
+  # Separate the server chat between non-linked worlds.
   isolate-chat: true
 
-  # This will separate potion effects between worlds.
+  # If enabled, the console will see all the
+  # messages of the players in the different worlds.
+  show-chat-to-console: true
+
+  # Separate player active effects between non-linked worlds.
   isolate-effects: true
 
-  # This will separate the enderchests between worlds.
+  # Separate enderchest content between non-linked worlds.
   isolate-enderchests: true
 
   # This will separate the gamemode between worlds.
@@ -53,47 +55,38 @@ server-settings:
   # This will separate inventory between worlds.
   isolate-inventories: true
 
-  # Enable this option to save the player
-  # stats every time he switch world.
-  # This is used to avoid any data lost in
-  # case the server crash. (Not Recommended)
-  save-statistics-on-world-change: false
-
   # Clear the player chat when switching world.
+  # This will not happen between linked worlds.
   clear-chat: true
 
-  # Warning! Edit this value in worlds.yml,
-  # this is used to register a new world with
-  # that messages instead of a null one.
-  # - The message showed when a player die.
-  death-message: '&a%player% &cdied.'
-
-  # Warning! Edit this value in worlds.yml,
-  # this is used to register a new world with
-  # that messages instead of a null one.
-  # - The message showed when a player gets
-  #   killed from another one.
-  killer-death-message: '&a%player% &chas been killed by &a%killer%'
-
-  # Warning! Edit this value in worlds.yml,
-  # this is used to register a new world with
-  # that messages instead of a null one.
-  # - The message showed when a player gets
-  #   killed from another one with a weapon.
-  killer-weapon-death-message: '&a%player% &chas been killed by &a%killer% &cwith
-    %item%'
-
-  # Warning! Edit this value in worlds.yml,
-  # this is used to register a new world with
-  # that messages instead of a null one.
-  # - Message showed when a player join
-  # the server / another world.
-  join-message: '&8[&a+&8] &a%player%'
-
-  # Warning! Edit this value in worlds.yml,
-  # this is used to register a new world with
-  #  that messages instead of a null one.
-  # - Message showed when a player quit
-  # the server / another world.
-  quit-message: '&8[&c-&8] &a%player%'
-
+# This is the default world config that is
+# generated when a new world is registered.
+default-world-config:
+  spawn: ""
+  teleport-to-last-location: false
+  teleport-to-spawn-on-join: false
+  security:
+    deny-message: "&c&lSorry! &7You can't do that here."
+    disable-block-place: false
+    disable-block-break: false
+    disable-mob-spawning: false
+    disable-explosions: false
+    disable-player-actions: false
+    disable-players-drops: false
+    disable-players-pickup: false
+    disable-fall-damage: false
+    disable-pvp: false
+  denied-commands:
+    deny-message: "Unknown command. Type \"/help\" for help."
+    starts-with: []
+    single-command: []
+  actions-on-join: []
+  actions-on-quit: []
+  actions-on-death: []
+  actions-on-respawn: []
+  death-message: "&a%player% &cdied."
+  killer-death-message: "&a%player% &chas been killed by &a%killer%"
+  killer-weapon-death-message: "&a%player% &chas been killed by &a%killer% &cwith %item%"
+  join-message: "&8[&a+&8] &a%player%"
+  quit-message: "&8[&c-&8] &a%player%"
+  linked-worlds: []

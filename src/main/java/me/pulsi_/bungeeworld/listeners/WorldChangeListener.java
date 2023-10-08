@@ -3,7 +3,6 @@ package me.pulsi_.bungeeworld.listeners;
 import me.pulsi_.bungeeworld.BungeeWorld;
 import me.pulsi_.bungeeworld.actions.ActionProcessor;
 import me.pulsi_.bungeeworld.registry.PlayerUtils;
-import me.pulsi_.bungeeworld.utils.BWChat;
 import me.pulsi_.bungeeworld.utils.BWUtils;
 import me.pulsi_.bungeeworld.values.Values;
 import me.pulsi_.bungeeworld.registry.WorldReader;
@@ -16,7 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import java.util.List;
 
 public class WorldChangeListener implements Listener {
 
@@ -24,28 +22,26 @@ public class WorldChangeListener implements Listener {
     public void onWorldChange(PlayerChangedWorldEvent e) {
         Player p = e.getPlayer();
 
-        World fromWorld = e.getFrom(), newWorld = p.getWorld();
-        String fromWorldName = fromWorld.getName(), newWorldName = newWorld.getName();
-
-        WorldReader prevReader = new WorldReader(fromWorldName);
-        boolean isLinked = prevReader.isLinkedWorld(newWorldName);
+        String fromWorld = e.getFrom().getName(), newWorld = p.getWorld().getName();
+        WorldReader prevReader = new WorldReader(fromWorld);
+        boolean isLinked = prevReader.isLinkedWorld(newWorld);
 
         if (Values.CONFIG.isClearChat()) BWUtils.clearChat(p);
 
         if (!isLinked) {
             PlayerUtils playerUtils = new PlayerUtils(p);
-            playerUtils.storeStatistics(fromWorldName);
-            playerUtils.loadStatistics(newWorldName);
+            playerUtils.storeStatistics(fromWorld);
+            playerUtils.loadStatistics(newWorld);
 
             if (Values.CONFIG.isIsolateChat()) {
-                quitMessage(p, fromWorld);
-                joinMessage(p, newWorld);
+                playerUtils.quitMessage(fromWorld);
+                playerUtils.joinMessage(newWorld);
             }
         }
 
         ActionProcessor.executeActions(p, prevReader.getWorld().getActionsOnQuit());
 
-        WorldReader reader = new WorldReader(newWorldName);
+        WorldReader reader = new WorldReader(newWorld);
         Bukkit.getScheduler().runTaskLater(BungeeWorld.INSTANCE, () -> ActionProcessor.executeActions(p, reader.getWorld().getActionsOnJoin()), 5L);
     }
 
@@ -61,53 +57,5 @@ public class WorldChangeListener implements Listener {
             String fromN = fromW.getName();
             if (!fromN.equals(p.getWorld().getName())) new PlayerUtils(p).storeLastLocation(from, fromN);
         }, 1L);
-    }
-
-    private void joinMessage(Player p, World world) {
-        WorldReader reader = new WorldReader(world.getName());
-        String joinMessage = reader.getJoinMessage();
-        if (joinMessage == "") return;
-
-        String message = BWChat.color(joinMessage.replace("%player%", p.getName()));
-        for (Player player : world.getPlayers()) {
-            if (!player.equals(p)) player.sendMessage(message);
-        }
-
-        List<String> linkedWorldsNames = reader.getLinkedWorlds();
-        if (linkedWorldsNames.isEmpty()) return;
-
-        for (String linkedWorldName : linkedWorldsNames) {
-            if (linkedWorldName.equals(world.getName())) continue;
-
-            World linkedWorld = Bukkit.getWorld(linkedWorldName);
-            if (linkedWorld == null) continue;
-
-            for (Player players : linkedWorld.getPlayers())
-                players.sendMessage(joinMessage);
-        }
-    }
-
-    private void quitMessage(Player p, World world) {
-        WorldReader reader = new WorldReader(world.getName());
-        String quitMessage = reader.getQuitMessage();
-        if (quitMessage == "") return;
-
-        String message = BWChat.color(quitMessage.replace("%player%", p.getName()));
-        for (Player player : world.getPlayers()) {
-            if (!player.equals(p)) player.sendMessage(message);
-        }
-
-        List<String> linkedWorldsNames = reader.getLinkedWorlds();
-        if (linkedWorldsNames.isEmpty()) return;
-
-        for (String linkedWorldName : linkedWorldsNames) {
-            if (linkedWorldName.equals(world.getName())) continue;
-
-            World linkedWorld = Bukkit.getWorld(linkedWorldName);
-            if (linkedWorld == null) continue;
-
-            for (Player players : linkedWorld.getPlayers())
-                players.sendMessage(quitMessage);
-        }
     }
 }
