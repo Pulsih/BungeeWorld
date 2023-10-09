@@ -1,8 +1,8 @@
 package me.pulsi_.bungeeworld.commands;
 
-import me.pulsi_.prisonenchants.PrisonEnchants;
-import me.pulsi_.prisonenchants.utils.PEMessages;
-import me.pulsi_.prisonenchants.utils.PEUtils;
+import me.pulsi_.bungeeworld.BungeeWorld;
+import me.pulsi_.bungeeworld.utils.BWMessages;
+import me.pulsi_.bungeeworld.utils.BWUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -19,7 +19,7 @@ public abstract class BWCommand {
 
     public BWCommand(String... aliases) {
         this.identifier = aliases[0];
-        this.permission = "prisonenchants." + identifier;
+        this.permission = "bungeeworld." + identifier;
 
         this.aliases = new String[aliases.length - 1];
         System.arraycopy(aliases, 1, this.aliases, 0, aliases.length - 1);
@@ -64,7 +64,7 @@ public abstract class BWCommand {
     public boolean confirm(CommandSender s) {
         if (needConfirm()) {
             if (!confirm.contains(s.getName())) {
-                Bukkit.getScheduler().runTaskLater(PrisonEnchants.INSTANCE, () -> confirm.remove(s.getName()), getConfirmCooldown() * 20L);
+                Bukkit.getScheduler().runTaskLater(BungeeWorld.INSTANCE, () -> confirm.remove(s.getName()), getConfirmCooldown() * 20L);
                 if (getConfirmMessage() != null && !getConfirmMessage().equals("")) sendConfirm(s);
                 confirm.add(s.getName());
                 return true;
@@ -75,7 +75,7 @@ public abstract class BWCommand {
     }
 
     public void execute(CommandSender s, String[] args) {
-        if (!PEUtils.hasPermission(s, getPermission()) || (playerOnly() && !PEUtils.isPlayer(s))) return;
+        if (!BWUtils.hasPermission(s, getPermission()) || (playerOnly() && !BWUtils.isPlayer(s))) return;
 
         if (!skipUsageWarn() && args.length == 1) {
             if (getUsage() != null && !getUsage().isEmpty()) sendUsage(s);
@@ -87,11 +87,11 @@ public abstract class BWCommand {
         if (hasCooldown() && getCooldown() > 0 && !(s instanceof ConsoleCommandSender)) {
             if (cooldownMap.containsKey(s.getName()) && cooldownMap.get(s.getName()) > System.currentTimeMillis()) {
                 if (getCooldownMessage() != null && !getCooldownMessage().isEmpty())
-                    PEMessages.send(s, getCooldownMessage(), true);
+                    BWMessages.send(s, getCooldownMessage(), true);
                 return;
             }
             cooldownMap.put(s.getName(), System.currentTimeMillis() + (getCooldown() * 1000L));
-            Bukkit.getScheduler().runTaskLater(PrisonEnchants.INSTANCE, () -> cooldownMap.remove(s.getName()), getCooldown() * 20L);
+            Bukkit.getScheduler().runTaskLater(BungeeWorld.INSTANCE, () -> cooldownMap.remove(s.getName()), getCooldown() * 20L);
         }
     }
 
@@ -110,11 +110,11 @@ public abstract class BWCommand {
                 .replace("<", "&8<&3")
                 .replace(">", "&8>");
 
-        PEMessages.send(s, preUsage + usage, true);
+        BWMessages.send(s, preUsage + usage, true);
     }
 
     private void sendConfirm(CommandSender s) {
         String preConfirm = "%prefix% &c", confirm = getConfirmMessage();
-        PEMessages.send(s, preConfirm + confirm, true);
+        BWMessages.send(s, preConfirm + confirm, true);
     }
 }

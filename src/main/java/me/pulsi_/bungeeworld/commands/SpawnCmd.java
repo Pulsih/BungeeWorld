@@ -1,8 +1,8 @@
 package me.pulsi_.bungeeworld.commands;
 
+import me.pulsi_.bungeeworld.registry.WorldReader;
 import me.pulsi_.bungeeworld.utils.BWMessages;
 import me.pulsi_.bungeeworld.utils.BWUtils;
-import me.pulsi_.bungeeworld.registry.WorldReader;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,9 +16,9 @@ public class SpawnCmd implements CommandExecutor {
         if (!BWUtils.isPlayer(s)) return false;
 
         Player p = (Player) s;
-        if (!BWUtils.hasPermissions(p, "bungeeworld.spawn")) return false;
+        if (!BWUtils.hasPermission(p, "bungeeworld.spawn")) return false;
 
-        Location location = BWUtils.getLocation(new WorldReader(p.getWorld().getName()).getSpawn());
+        Location location = new WorldReader(p.getWorld().getName()).getWorld().getSpawn();
         if (location == null) {
             BWMessages.send(p, "spawn_not_set");
             return false;

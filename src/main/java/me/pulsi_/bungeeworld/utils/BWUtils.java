@@ -183,7 +183,7 @@ public class BWUtils {
         }
     }
 
-    public static boolean hasPermissions(CommandSender s, String permission) {
+    public static boolean hasPermission(CommandSender s, String permission) {
         if (!s.hasPermission(permission)) {
             BWMessages.send(s, "no_permission");
             return false;

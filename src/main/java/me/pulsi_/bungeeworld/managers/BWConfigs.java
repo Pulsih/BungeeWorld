@@ -2,6 +2,7 @@ package me.pulsi_.bungeeworld.managers;
 
 import me.pulsi_.bungeeworld.BungeeWorld;
 import me.pulsi_.bungeeworld.utils.BWLogger;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.FileUtil;
@@ -66,14 +67,14 @@ public class BWConfigs {
         try {
             config.save(file);
         } catch (IOException e) {
-            BWLogger.error("Could not save \"saves\" file! (Error: " + e.getMessage().replace("\n", "") + ")");
+            BWLogger.error(e, "Could not save \"saves\" file!");
         }
     }
 
     public void setupConfig() {
-        boolean updateFile = true, alreadyExist = getFile(Type.CONFIG.name).exists();
+        boolean updateFile = true, alreadyExist = getFile(Type.CONFIG).exists();
         if (alreadyExist) {
-            FileConfiguration config = getConfig(Type.CONFIG.name);
+            FileConfiguration config = getConfig(Type.CONFIG);
 
             autoUpdateFiles = config.get("General-Settings.Auto-Update-Files") == null || config.getBoolean("General-Settings.Auto-Update-Files");
             updateFile = !updated && autoUpdateFiles;
@@ -83,10 +84,14 @@ public class BWConfigs {
     }
 
     public void setupMessages() {
-        boolean updateFile = true, alreadyExist = getFile(Type.MESSAGES.name).exists();
+        boolean updateFile = true, alreadyExist = getFile(Type.MESSAGES).exists();
         if (alreadyExist) updateFile = !updated && autoUpdateFiles;
 
         if (updateFile) setupFile(Type.MESSAGES, alreadyExist);
+    }
+
+    public File getFile(Type type) {
+        return getFile(type.name);
     }
 
     public File getFile(String path) {
@@ -105,8 +110,34 @@ public class BWConfigs {
         return YamlConfiguration.loadConfiguration(getFile(path));
     }
 
-    public void saveConfig(String fileName) {
+    public void save(FileConfiguration config, File file) {
+        save(config, file, false);
+    }
 
+    public void save(FileConfiguration config, File file, boolean async) {
+        if (!async) {
+            privateSave(config, file);
+            return;
+        }
+        try {
+            Bukkit.getScheduler().runTaskAsynchronously(BungeeWorld.INSTANCE, () -> {
+                try {
+                    config.save(file);
+                } catch (Exception e) {
+                    Bukkit.getScheduler().runTask(BungeeWorld.INSTANCE, () -> privateSave(config, file));
+                }
+            });
+        } catch (Exception e) {
+            privateSave(config, file);
+        }
+    }
+
+    private void privateSave(FileConfiguration config, File file) {
+        try {
+            config.save(file);
+        } catch (IOException e) {
+            BWLogger.error(e.getMessage());
+        }
     }
 
     public void setupFile(Type type, boolean backup) {

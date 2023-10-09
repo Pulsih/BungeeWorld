@@ -8,7 +8,6 @@ import me.pulsi_.bungeeworld.values.Values;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -103,7 +102,7 @@ public class WorldsRegistry {
             return;
         }
 
-        world.setSpawn(config.getString("spawn"));
+        world.setSpawn(BWUtils.getLocation(config.getString("spawn")));
         world.setTeleportToLastLocation(config.getBoolean("teleport-to-last-location"));
         world.setTeleportToSpawnOnJoin(config.getBoolean("teleport-to-spawn-on-join"));
 
@@ -181,6 +180,40 @@ public class WorldsRegistry {
         } catch (IOException e) {
             BWLogger.warn(e, "Something went wrong while trying to save player statistics to " + p.getName() + "'s file.");
         }
+    }
+
+    public void saveWorldSettings(BWWorld world) {
+        File file = new File(plugin.getDataFolder(), "worlds" + File.separator + world.getName() + ".yml");
+        FileConfiguration config = plugin.getConfigs().getConfig(file);
+
+        config.set("spawn", BWUtils.getStringLocation(world.getSpawn()));
+        config.set("teleport-to-last-location", world.isTeleportToLastLocation());
+        config.set("teleport-to-spawn-on-join", world.isTeleportToSpawnOnJoin());
+        config.set("security.deny-message", world.getSecurity().denyMessage);
+        config.set("security.disable-block-place", world.getSecurity().disabledBlockBreak);
+        config.set("security.disable-block-break", world.getSecurity().disabledBlockBreak);
+        config.set("security.disable-mob-spawning", world.getSecurity().disabledMobSpawning);
+        config.set("security.disable-explosions", world.getSecurity().disabledExplosions);
+        config.set("security.disable-player-actions", world.getSecurity().disabledPlayerActions);
+        config.set("security.disable-players-drops", world.getSecurity().disabledPlayerDrops);
+        config.set("security.disable-players-pickup", world.getSecurity().disabledPlayerPickup);
+        config.set("security.disable-fall-damage", world.getSecurity().disabledFallDamage);
+        config.set("security.disable-pvp", world.getSecurity().disabledPvP);
+        config.set("denied-commands.deny-message", world.getDenyCommandsMessage());
+        config.set("denied-commands.starts-with", world.getDenyCommandsStartsWith());
+        config.set("denied-commands.single-command", world.getDenyCommandsSingle());
+        config.set("actions-on-join", world.getActionsOnJoin());
+        config.set("actions-on-quit", world.getActionsOnQuit());
+        config.set("actions-on-death", world.getActionsOnDeath());
+        config.set("actions-on-respawn", world.getActionsOnRespawn());
+        config.set("death-message", world.getDeathMessage());
+        config.set("killer-death-message", world.getKillerDeathMessage());
+        config.set("killer-weapon-death-message", world.getKillerWeaponDeathMessage());
+        config.set("join-message", world.getJoinMessage());
+        config.set("quit-message", world.getQuitMessage());
+        config.set("linked-worlds", world.getLinkedWorlds());
+
+        plugin.getConfigs().save(config, file);
     }
 
     public void unloadPlayerFromWorlds(Player p) {

@@ -27,6 +27,12 @@ join-settings:
     sound-type: "ENTITY_PLAYER_LEVELUP 5 1 MASTER"
 
 server-settings:
+  # Save all player statistics every 6 minutes
+  # If not time is specified it will use 6 minutes by default.
+  # It is very important to save player data every x
+  # time to avoid data loss if the server crash.
+  save-time: 6
+
   # Enable to deny player commands like "/plugin:command"
   deny-dots-commands: true
 

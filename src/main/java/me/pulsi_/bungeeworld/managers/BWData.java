@@ -1,6 +1,7 @@
 package me.pulsi_.bungeeworld.managers;
 
 import me.pulsi_.bungeeworld.BungeeWorld;
+import me.pulsi_.bungeeworld.commands.CmdRegisterer;
 import me.pulsi_.bungeeworld.commands.HubCmd;
 import me.pulsi_.bungeeworld.commands.MainCmd;
 import me.pulsi_.bungeeworld.commands.SpawnCmd;
@@ -14,10 +15,12 @@ import org.bukkit.plugin.PluginManager;
 
 public class BWData {
 
+    private final CmdRegisterer cmdRegisterer;
     private final BungeeWorld plugin;
     
     public BWData(BungeeWorld plugin) {
         this.plugin = plugin;
+        cmdRegisterer = new CmdRegisterer();
     }
     
     public void setupPlugin() {
@@ -56,6 +59,8 @@ public class BWData {
             Values.CONFIG.loadValues();
             BWMessages.loadMessages();
             plugin.getWorldsRegistry().loadWorlds();
+
+            cmdRegisterer.registerCmds();
 
             ItemManager.loadItems();
             new GuiManager().loadGuis();

@@ -1,5 +1,7 @@
 package me.pulsi_.bungeeworld.registry;
 
+import org.bukkit.Location;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -9,7 +11,8 @@ public class BWWorld {
     private final HashMap<UUID, BWPlayer> players = new HashMap<>();
     private final String name;
 
-    private String spawn, denyCommandsMessage, deathMessage, killerDeathMessage, killerWeaponDeathMessage, joinMessage, quitMessage;
+    private Location spawn;
+    private String denyCommandsMessage, deathMessage, killerDeathMessage, killerWeaponDeathMessage, joinMessage, quitMessage;
     private boolean teleportToLastLocation, teleportToSpawnOnJoin;
     private BWSecurity security;
     private List<String> denyCommandsStartsWith, denyCommandsSingle, actionsOnJoin, actionsOnQuit, actionsOnDeath, actionsOnRespawn, linkedWorlds;
@@ -26,7 +29,7 @@ public class BWWorld {
         return name;
     }
 
-    public String getSpawn() {
+    public Location getSpawn() {
         return spawn;
     }
 
@@ -94,7 +97,7 @@ public class BWWorld {
         return linkedWorlds;
     }
 
-    public void setSpawn(String spawn) {
+    public void setSpawn(Location spawn) {
         this.spawn = spawn;
     }
 

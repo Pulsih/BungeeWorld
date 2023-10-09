@@ -2,13 +2,10 @@ package me.pulsi_.bungeeworld.registry;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import java.io.File;
 import java.util.Collection;
-import java.util.HashSet;
 
 public class BWPlayer {
 

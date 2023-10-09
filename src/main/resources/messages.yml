@@ -1,0 +1,41 @@
+# Messages File of BungeeWorld
+# Made by Pulsi_, Version v1.5
+
+# The main prefix.
+prefix: "&2&lBungee&a&lWorld"
+
+# You can use a message as single or multiple:
+# MessageIdentifier: "A single message"
+# MessageIdentifier:
+#   - "Multiple messages"
+#   - "in just one! :)"
+
+# Plugin Messages.
+hub_set: "%prefix% &aSuccessfully set the hub!"
+spawn_set: "%prefix% &aSuccessfully set the world spawn!"
+teleported_hub: "%prefix% &aYou have been teleported to the hub!"
+teleported_spawn: "%prefix% &aYou have been teleported to the spawn!"
+item_given: "%prefix% &aSuccessfully given %item% to %player%!"
+player_sent: "%prefix% &aSuccessfully sent %player% to %world%!"
+player_tp: "%prefix% &aTeleported to %world%!"
+setting_updated: "%prefix% &aSuccessfully updated the setting!"
+
+# Plugin Errors.
+unknown_command: "%prefix% &cUnknown command!"
+no_permission: "%prefix% &cYou don' have the permission!"
+not_player: "%prefix% &cYou are not a player!"
+spawn_not_set: "%prefix% &cThe spawn has not been set yet!"
+hub_not_set: "%prefix% &cThe hub hasn't been set yet!"
+already_at_hub: "%prefix% &cYou are already at the hub!"
+specify_player: "%prefix% &cPlease specify a player!"
+invalid_player: "%prefix% &cPlease choose a valid player!"
+specify_item: "%prefix% &cPlease specify an item!"
+invalid_item: "%prefix% &cPlease choose a valid item!"
+invalid_number: "%prefix% &cPlease choose a valid number!"
+specify_world: "%prefix% &cPlease specify a world!"
+invalid_world: "%prefix% &cPlease choose a valid world!"
+invalid_gui: "%prefix% &cPlease choose a valid gui!"
+specify_setting: "%prefix% &cPlease specify a setting!"
+invalid_setting: "%prefix% &cPlease choose a valid setting!"
+specify_value: "%prefix% &cPlease specify a value!"
+invalid_format: "%prefix% &cYou can't use this command format!"

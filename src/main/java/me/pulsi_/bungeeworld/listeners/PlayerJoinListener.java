@@ -2,7 +2,9 @@ package me.pulsi_.bungeeworld.listeners;
 
 import me.pulsi_.bungeeworld.BungeeWorld;
 import me.pulsi_.bungeeworld.actions.ActionProcessor;
-import me.pulsi_.bungeeworld.registry.*;
+import me.pulsi_.bungeeworld.registry.BWWorld;
+import me.pulsi_.bungeeworld.registry.PlayerUtils;
+import me.pulsi_.bungeeworld.registry.WorldsRegistry;
 import me.pulsi_.bungeeworld.utils.BWUtils;
 import me.pulsi_.bungeeworld.values.Values;
 import org.bukkit.Bukkit;
@@ -33,7 +35,7 @@ public class PlayerJoinListener implements Listener {
         String worldName = world.getName();
         boolean tpSpawn = true;
 
-        if (Values.CONFIG.isTeleportHubWhenJoin() && !worldName.equals(Values.CONFIG.getHubName())) {
+        if (Values.CONFIG.isTeleportHubWhenJoin() && !worldName.equals(Values.CONFIG.getHub())) {
             Location hub = BWUtils.getLocation(Values.CONFIG.getHubSpawn());
             if (hub != null) {
                 p.teleport(hub);

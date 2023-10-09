@@ -3,12 +3,10 @@ package me.pulsi_.bungeeworld.registry;
 import me.pulsi_.bungeeworld.BungeeWorld;
 import me.pulsi_.bungeeworld.utils.BWChat;
 import me.pulsi_.bungeeworld.utils.MapUtils;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 public class WorldReader {
