@@ -41,6 +41,9 @@ public class BWConfigs {
         setupSavesFile();
         setupConfig();
         setupMessages();
+
+        new File(plugin.getDataFolder(), "worlds").mkdirs();
+        new File(plugin.getDataFolder(), "playerData").mkdirs();
     }
 
     public void setupSavesFile() {

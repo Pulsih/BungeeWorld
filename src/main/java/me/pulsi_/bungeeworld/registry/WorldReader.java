@@ -80,13 +80,13 @@ public class WorldReader {
     }
 
     public void denyMessage(Entity p) {
-        if (world.getSecurity().denyMessage == "") return;
+        if (world.getSecurity().denyMessage.isEmpty()) return;
 
         HashMap<UUID, Long> cooldown = MapUtils.denyMessageCooldown;
         if (cooldown.containsKey(p.getUniqueId()) && System.currentTimeMillis() < cooldown.get(p.getUniqueId())) return;
 
         p.sendMessage(BWChat.color(world.getSecurity().denyMessage));
-        cooldown.put(p.getUniqueId(), Long.valueOf(System.currentTimeMillis() + 3000L));
+        cooldown.put(p.getUniqueId(), System.currentTimeMillis() + 3000L);
     }
 
     public String getWorldName() {

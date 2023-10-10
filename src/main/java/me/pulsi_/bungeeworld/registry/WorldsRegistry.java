@@ -16,10 +16,7 @@ import org.bukkit.potion.PotionEffect;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class WorldsRegistry {
 
@@ -37,12 +34,6 @@ public class WorldsRegistry {
     public void loadWorlds() {
         worlds.clear();
 
-        File worldFilesFolder = new File(plugin.getDataFolder(), "worlds");
-        if (!worldFilesFolder.exists()) worldFilesFolder.getParentFile().mkdirs();
-
-        File[] worldFiles = worldFilesFolder.listFiles();
-        if (worldFiles == null || worldFiles.length == 0) return;
-
         List<String> worldNames = new ArrayList<>();
         for (World world : Bukkit.getWorlds()) worldNames.add(world.getName());
 
@@ -53,7 +44,13 @@ public class WorldsRegistry {
         }
     }
 
-    public void registerWorld(BWWorld world) {
+    public FileConfiguration registerWorld(BWWorld world, File file) {
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            BWLogger.warn(e, "Could not create new file for the world \"" + world.getName() + "\"!");
+        }
+
         FileConfiguration worldConfig = new YamlConfiguration(), config = plugin.getConfigs().getConfig(BWConfigs.Type.CONFIG);
 
         setFromConfig(worldConfig, config, "spawn");
@@ -85,22 +82,18 @@ public class WorldsRegistry {
         setFromConfig(worldConfig, config, "linked-worlds");
 
         try {
-            worldConfig.save(plugin.getConfigs().getFile("worlds" + File.separator + world.getName()));
+            worldConfig.save(file);
         } catch (IOException e) {
             BWLogger.warn(e, "Could not save file changes to the file \"" + world.getName() + "\".");
         }
-        setupWorld(world, worldConfig);
+        return worldConfig;
     }
 
     public void setupWorld(BWWorld world) {
-        setupWorld(world, plugin.getConfigs().getConfig("worlds" + File.separator + world.getName() + ".yml"));
-    }
+        File file = plugin.getConfigs().getFile("worlds" + File.separator + world.getName() + ".yml");
+        FileConfiguration config = plugin.getConfigs().getConfig(file);
 
-    public void setupWorld(BWWorld world, FileConfiguration config) {
-        if (config == null) {
-            registerWorld(world);
-            return;
-        }
+        if (!file.exists()) config = registerWorld(world, file);
 
         world.setSpawn(BWUtils.getLocation(config.getString("spawn")));
         world.setTeleportToLastLocation(config.getBoolean("teleport-to-last-location"));
@@ -142,15 +135,51 @@ public class WorldsRegistry {
             String worldName = world.getName();
             BWPlayer player = new BWPlayer();
 
-            if (Values.CONFIG.isIsolateInventories()) player.setInventory((ItemStack[]) config.get(worldName + ".inventory"));
-            if (Values.CONFIG.isIsolateEnderchests()) player.setEnderChest((ItemStack[]) config.get(worldName + ".enderchest"));
-            if (Values.CONFIG.isIsolateEffects()) player.setEffects((Collection<PotionEffect>) config.get(worldName + ".effects"));
-            if (Values.CONFIG.isIsolateGamemode()) player.setGameMode(GameMode.valueOf(config.getString(worldName + ".gamemode")));
-            if (Values.CONFIG.isIsolateHealth()) {
-                player.setHealth(config.getInt(worldName + ".health"));
-                player.setMaxHealth(config.getInt(worldName + ".max-health"));
+            if (Values.CONFIG.isIsolateInventories()) {
+                ItemStack[] content = {};
+                List<?> configContent = config.getList(worldName + ".inventory");
+                if (configContent != null) content = configContent.toArray(new ItemStack[0]);
+
+                player.setInventory(content);
             }
-            if (Values.CONFIG.isIsolateHunger()) player.setHunger(config.getInt(worldName + ".hunger"));
+            if (Values.CONFIG.isIsolateEnderchests()) {
+                ItemStack[] content = {};
+                List<?> configContent = config.getList(worldName + ".enderchest");
+                if (configContent != null) content = configContent.toArray(new ItemStack[0]);
+
+                player.setEnderChest(content);
+            }
+            if (Values.CONFIG.isIsolateEffects()) {
+                Collection<PotionEffect> effects = new HashSet<>();
+                List<?> configEffects = config.getList(worldName + ".effects");
+                if (configEffects != null) effects = (Collection<PotionEffect>) configEffects;
+
+                player.setEffects(effects);
+            }
+            if (Values.CONFIG.isIsolateGamemode()) {
+                GameMode gameMode = Bukkit.getDefaultGameMode();
+                String configGameMode = config.getString(worldName + ".gamemode");
+                if (configGameMode != null) gameMode = GameMode.valueOf(configGameMode);
+
+                player.setGameMode(gameMode);
+            }
+            if (Values.CONFIG.isIsolateHealth()) {
+                int health = 20, maxHealth = 20;
+
+                String configHealth = config.getString(worldName + ".health"), configMaxHealth = config.getString(worldName + ".max-health");
+                if (configHealth != null) health = Integer.parseInt(configHealth);
+                if (configMaxHealth != null) maxHealth = Integer.parseInt(configMaxHealth);
+
+                player.setHealth(health);
+                player.setMaxHealth(maxHealth);
+            }
+            if (Values.CONFIG.isIsolateHunger()) {
+                int hunger = 20;
+                String configHunger = config.getString(worldName + ".hunger");
+                if (configHunger != null) hunger = Integer.parseInt(configHunger);
+
+                player.setHunger(hunger);
+            }
 
             world.getPlayers().put(p.getUniqueId(), player);
         }
@@ -180,6 +209,21 @@ public class WorldsRegistry {
         } catch (IOException e) {
             BWLogger.warn(e, "Something went wrong while trying to save player statistics to " + p.getName() + "'s file.");
         }
+    }
+
+    public void registererPlayer(Player p) {
+        File file = new File(plugin.getDataFolder(), "playerData" + File.separator + p.getUniqueId() + ".yml");
+        if (file.exists()) return;
+
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            BWLogger.warn(e, "Could not register player \"" + p.getName() + "\"!");
+        }
+    }
+
+    public boolean isPlayerRegistered(Player p) {
+        return new File(plugin.getDataFolder(), "playerData" + File.separator + p.getUniqueId() + ".yml").exists();
     }
 
     public void saveWorldSettings(BWWorld world) {

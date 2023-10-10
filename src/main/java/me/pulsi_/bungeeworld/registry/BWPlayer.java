@@ -1,5 +1,6 @@
 package me.pulsi_.bungeeworld.registry;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -32,11 +33,11 @@ public class BWPlayer {
     }
 
     public int getHealth() {
-        return health;
+        return health == 0 ? 20 : health;
     }
 
     public int getMaxHealth() {
-        return maxHealth;
+        return maxHealth == 0 ? 20 : maxHealth;
     }
 
     public int getHunger() {

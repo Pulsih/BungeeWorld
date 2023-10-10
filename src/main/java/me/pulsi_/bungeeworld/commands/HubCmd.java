@@ -3,6 +3,7 @@ package me.pulsi_.bungeeworld.commands;
 import me.pulsi_.bungeeworld.registry.WorldReader;
 import me.pulsi_.bungeeworld.utils.BWMessages;
 import me.pulsi_.bungeeworld.utils.BWUtils;
+import me.pulsi_.bungeeworld.utils.BWSounds;
 import me.pulsi_.bungeeworld.values.Values;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,8 +23,12 @@ public class HubCmd implements CommandExecutor {
         if (!BWUtils.hasPermission(p, "bungeeworld.hub")) return false;
 
         String hubName = Values.GLOBAL.getHub();
-        World world = Bukkit.getWorld(hubName);
+        if (hubName == null) {
+            BWMessages.send(p, "hub_not_set");
+            return false;
+        }
 
+        World world = Bukkit.getWorld(hubName);
         if (world == null) {
             BWMessages.send(p, "hub_not_set");
             return false;
@@ -38,7 +43,7 @@ public class HubCmd implements CommandExecutor {
         if (hub != null) p.teleport(hub);
         else p.teleport(world.getSpawnLocation());
 
-        BWUtils.playSound(p, Values.CONFIG.getHubTeleportSound());
+        BWSounds.playSound(p, Values.CONFIG.getHubTeleportSound());
         BWMessages.send(p, "teleported_hub");
         return true;
     }

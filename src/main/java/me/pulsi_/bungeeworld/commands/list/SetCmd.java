@@ -85,7 +85,7 @@ public class SetCmd extends BWCommand {
             case "join-message":
             case "quit-message":
 
-                registry.setValue(world, args[2], input);
+                //registry.setValue(world, args[2], input);
                 break;
 
             case "security.disable-block-place":
@@ -98,7 +98,7 @@ public class SetCmd extends BWCommand {
             case "security.disable-fall-damage":
             case "security.disable-pvp":
 
-                registry.setValue(world, args[2], Boolean.valueOf(input));
+                //registry.setValue(world, args[2], Boolean.valueOf(input));
                 break;
 
             case "denied-commands.starts-with":
@@ -111,7 +111,7 @@ public class SetCmd extends BWCommand {
                 List<String> list;
                 if (input.contains(",")) list = new ArrayList<>(Arrays.asList(input.split(",")));
                 else list = new ArrayList<>(Collections.singletonList(input));
-                registry.setValue(world, args[2], list);
+                //registry.setValue(world, args[2], list);
                 break;
 
             default:

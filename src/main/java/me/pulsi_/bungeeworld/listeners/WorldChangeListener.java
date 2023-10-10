@@ -31,7 +31,7 @@ public class WorldChangeListener implements Listener {
         if (!isLinked) {
             PlayerUtils playerUtils = new PlayerUtils(p);
             playerUtils.storeStatistics(fromWorld);
-            playerUtils.loadStatistics(newWorld);
+            playerUtils.applyStatistics(newWorld);
 
             if (Values.CONFIG.isIsolateChat()) {
                 playerUtils.quitMessage(fromWorld);

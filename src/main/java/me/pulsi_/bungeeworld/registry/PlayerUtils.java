@@ -77,19 +77,25 @@ public class PlayerUtils {
         }
     }
 
-    public void loadStatistics(String worldName) {
+    public void applyStatistics(String worldName) {
+        applyStatistics(worldName, false);
+    }
+
+    public void applyStatistics(String worldName, boolean firstJoin) {
         BWPlayer player = getBWPlayer(worldName);
         if (player == null) return;
 
-        if (Values.CONFIG.isIsolateInventories()) p.getInventory().setContents(player.getInventory());
-        if (Values.CONFIG.isIsolateEnderchests()) p.getEnderChest().setContents(player.getEnderChest());
-        if (Values.CONFIG.isIsolateEffects()) p.addPotionEffects(player.getEffects());
-        if (Values.CONFIG.isIsolateGamemode()) p.setGameMode(player.getGameMode());
-        if (Values.CONFIG.isIsolateHealth()) {
+        if (Values.CONFIG.isIsolateInventories() && !firstJoin) p.getInventory().setContents(player.getInventory());
+        if (Values.CONFIG.isIsolateEnderchests() && !firstJoin) p.getEnderChest().setContents(player.getEnderChest());
+        if (Values.CONFIG.isIsolateEffects() && !firstJoin) p.addPotionEffects(player.getEffects());
+        if (Values.CONFIG.isIsolateGamemode() && !firstJoin) p.setGameMode(player.getGameMode());
+
+        if (Values.CONFIG.isIsolateHealth() && !firstJoin) {
             p.setHealth(player.getHealth());
             p.setMaxHealth(player.getMaxHealth());
         }
-        if (Values.CONFIG.isIsolateHunger()) p.setFoodLevel(player.getHunger());
+
+        if (Values.CONFIG.isIsolateHunger() && !firstJoin) p.setFoodLevel(player.getHunger());
     }
 
     public void storeStatistics(String worldName) {

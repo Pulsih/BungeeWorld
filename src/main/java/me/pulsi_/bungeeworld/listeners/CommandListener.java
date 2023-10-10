@@ -18,8 +18,6 @@ public class CommandListener implements Listener {
 
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent e) {
-        FileConfiguration config = BungeeWorld.INSTANCE.getConfig();
-
         Player p = e.getPlayer();
         String command = e.getMessage().toLowerCase();
 
@@ -32,13 +30,12 @@ public class CommandListener implements Listener {
         String worldName = p.getWorld().getName();
         BWWorld world = new WorldReader(worldName).getWorld();
 
-        String denyMessage = world.security.denyMessage;
-        List<String> deniedCommandsStartsWith = world.denyCommandsStartsWith, deniedCommand = world.denyCommandsSingle;
+        List<String> deniedCommandsStartsWith = world.getDenyCommandsStartsWith(), deniedCommand = world.getDenyCommandsSingle();
 
         for (String cmd : deniedCommandsStartsWith) {
             if (!command.startsWith(cmd.toLowerCase())) continue;
 
-            p.sendMessage(BWChat.color(denyMessage));
+            BWMessages.send(p, world.getSecurity().denyMessage, true);
             e.setCancelled(true);
             return;
         }
@@ -46,7 +43,7 @@ public class CommandListener implements Listener {
         for (String cmd : deniedCommand) {
             if (!command.equals(cmd.toLowerCase())) continue;
 
-            p.sendMessage(BWChat.color(denyMessage));
+            BWMessages.send(p, world.getSecurity().denyMessage, true);
             e.setCancelled(true);
             return;
         }

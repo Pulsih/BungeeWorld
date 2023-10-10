@@ -25,7 +25,7 @@ public class PlayerRespawnListener implements Listener {
             new PlayerUtils(p).storeStatistics(world.getName());
         }, 1L);
 
-        Location spawn = BWUtils.getLocation(world.getSpawn());
+        Location spawn = world.getSpawn();
         if (spawn != null) e.setRespawnLocation(spawn);
     }
 }

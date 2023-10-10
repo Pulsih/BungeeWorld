@@ -6,6 +6,7 @@ import me.pulsi_.bungeeworld.registry.BWWorld;
 import me.pulsi_.bungeeworld.registry.PlayerUtils;
 import me.pulsi_.bungeeworld.registry.WorldsRegistry;
 import me.pulsi_.bungeeworld.utils.BWUtils;
+import me.pulsi_.bungeeworld.utils.BWSounds;
 import me.pulsi_.bungeeworld.values.Values;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -35,32 +36,37 @@ public class PlayerJoinListener implements Listener {
         String worldName = world.getName();
         boolean tpSpawn = true;
 
-        if (Values.CONFIG.isTeleportHubWhenJoin() && !worldName.equals(Values.CONFIG.getHub())) {
-            Location hub = BWUtils.getLocation(Values.CONFIG.getHubSpawn());
-            if (hub != null) {
-                p.teleport(hub);
+        String hubName = Values.GLOBAL.getHub();
+        if (hubName != null) {
+            World hub = Bukkit.getWorld(Values.GLOBAL.getHub());
+            if (hub != null && Values.CONFIG.isTeleportHubWhenJoin() && !worldName.equals(hub.getName())) {
+                Location hubSpawn = BWUtils.getLocation(hub.getName());
+                if (hubSpawn != null) {
+                    p.teleport(hubSpawn);
 
-                world = p.getWorld();
-                worldName = world.getName();
+                    world = p.getWorld();
+                    worldName = world.getName();
 
-                tpSpawn = false;
+                    tpSpawn = false;
+                }
             }
         }
 
-        registry.loadAllPlayerStatistics(p);
         PlayerUtils playerUtils = new PlayerUtils(p);
-        playerUtils.loadStatistics(worldName);
+        registry.loadAllPlayerStatistics(p);
+        playerUtils.applyStatistics(worldName, !registry.isPlayerRegistered(p));
+        registry.registererPlayer(p);
 
         BWWorld bwWorld = registry.getWorlds().get(worldName);
         Bukkit.getScheduler().runTaskLater(BungeeWorld.INSTANCE, () -> ActionProcessor.executeActions(p, bwWorld.getActionsOnJoin()), 5L);
 
         if (bwWorld.isTeleportToSpawnOnJoin() && tpSpawn) {
-            Location spawn = BWUtils.getLocation(bwWorld.getSpawn());
+            Location spawn = bwWorld.getSpawn();
             if (spawn != null) p.teleport(spawn);
         }
 
         if (Values.CONFIG.isJoinSendTitle()) BWUtils.sendTitle(p, Values.CONFIG.getJoinTitle());
-        if (Values.CONFIG.isJoinPlaySound()) BWUtils.playSound(p, Values.CONFIG.getJoinSound());
+        if (Values.CONFIG.isJoinPlaySound()) BWSounds.playSound(p, Values.CONFIG.getJoinSound());
         playerUtils.joinMessage(world);
     }
 }

@@ -19,15 +19,13 @@ public final class BungeeWorld extends JavaPlugin {
     public void onEnable() {
         INSTANCE = this;
 
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            data = new BWData(this);
-            configs = new BWConfigs(this);
-            worldsRegistry = new WorldsRegistry(this);
+        data = new BWData(this);
+        configs = new BWConfigs(this);
+        worldsRegistry = new WorldsRegistry(this);
 
-            data.setupPlugin();
+        data.setupPlugin();
 
-            placeholderApiHooked = Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null;
-        }, 1L);
+        placeholderApiHooked = Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null;
     }
 
     @Override

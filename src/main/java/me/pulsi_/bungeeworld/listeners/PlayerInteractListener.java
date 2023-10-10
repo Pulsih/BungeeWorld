@@ -1,7 +1,6 @@
 package me.pulsi_.bungeeworld.listeners;
 
 import me.pulsi_.bungeeworld.actions.ActionProcessor;
-import me.pulsi_.bungeeworld.managers.ItemManager;
 import me.pulsi_.bungeeworld.registry.WorldReader;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -16,11 +15,6 @@ public class PlayerInteractListener implements Listener {
     @EventHandler
     public void onUse(PlayerInteractEvent e) {
         Player p = e.getPlayer();
-
-        ItemStack item = p.getItemInHand();
-        if (!item.getType().equals(Material.AIR) && !ItemManager.getItemActions(item).isEmpty())
-            ActionProcessor.executeActions(p, ItemManager.getItemActions(item));
-
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !new WorldReader(p.getWorld().getName()).canUse(p)) e.setCancelled(true);
     }
 }

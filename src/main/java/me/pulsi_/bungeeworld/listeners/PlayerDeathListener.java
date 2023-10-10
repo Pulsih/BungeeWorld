@@ -1,6 +1,7 @@
 package me.pulsi_.bungeeworld.listeners;
 
 import me.pulsi_.bungeeworld.actions.ActionProcessor;
+import me.pulsi_.bungeeworld.registry.BWWorld;
 import me.pulsi_.bungeeworld.registry.WorldReader;
 import me.pulsi_.bungeeworld.utils.BWChat;
 import me.pulsi_.bungeeworld.values.Values;
@@ -23,21 +24,20 @@ public class PlayerDeathListener implements Listener {
         e.setDeathMessage(null);
 
         Player p = e.getEntity();
-        World world = p.getWorld();
 
-        WorldReader reader = new WorldReader(world.getName());
-        ActionProcessor.executeActions(p, reader.getActionsOnDeath());
+        BWWorld world = new WorldReader(p.getWorld().getName()).getWorld();
+        ActionProcessor.executeActions(p, world.getActionsOnDeath());
 
         String deathMessage;
         Player killer = e.getEntity().getKiller();
-        if (killer == null) deathMessage = reader.getDeathMessage1();
+        if (killer == null) deathMessage = world.getDeathMessage();
         else {
             ItemStack item = killer.getItemInHand();
             if (item.getType().equals(Material.AIR))
-                deathMessage = reader.getDeathMessage2().replace("%killer%", killer.getName());
+                deathMessage = world.getKillerDeathMessage().replace("%killer%", killer.getName());
             else {
                 String name;
-                deathMessage = reader.getDeathMessage3();
+                deathMessage = world.getKillerWeaponDeathMessage();
 
                 ItemMeta meta = item.getItemMeta();
                 if (meta.hasDisplayName()) name = meta.getDisplayName();
@@ -47,7 +47,7 @@ public class PlayerDeathListener implements Listener {
             }
         }
 
-        if (deathMessage == "") return;
+        if (deathMessage.isEmpty()) return;
 
         String message = BWChat.color(deathMessage.replace("%player%", p.getName()));
         if (!Values.CONFIG.isIsolateChat()) {
@@ -55,10 +55,9 @@ public class PlayerDeathListener implements Listener {
             return;
         }
 
-        for (Player player : p.getWorld().getPlayers())
-            player.sendMessage(message);
+        for (Player player : p.getWorld().getPlayers()) player.sendMessage(message);
 
-        List<String> linkedWorldsNames = reader.getLinkedWorlds();
+        List<String> linkedWorldsNames = world.getLinkedWorlds();
         if (linkedWorldsNames.isEmpty()) return;
 
         for (String linkedWorldName : linkedWorldsNames) {
@@ -67,8 +66,7 @@ public class PlayerDeathListener implements Listener {
             World linkedWorld = Bukkit.getWorld(linkedWorldName);
             if (linkedWorld == null) continue;
 
-            for (Player players : linkedWorld.getPlayers())
-                players.sendMessage(message);
+            for (Player players : linkedWorld.getPlayers()) players.sendMessage(message);
         }
     }
 }

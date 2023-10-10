@@ -76,7 +76,7 @@ public class SendCmd extends BWCommand {
         }
 
         BWWorld world = new WorldReader(destination.getName()).getWorld();
-        Location loc = BWUtils.getLocation(world.getSpawn());
+        Location loc = world.getSpawn();
 
         if (world.isTeleportToLastLocation()) {
             Location lastLocation = new PlayerUtils(target).getBWPlayer(world.getName()).getLastLocation();

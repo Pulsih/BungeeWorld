@@ -4,6 +4,7 @@ import me.pulsi_.bungeeworld.BungeeWorld;
 import me.pulsi_.bungeeworld.actions.ActionProcessor;
 import me.pulsi_.bungeeworld.registry.PlayerUtils;
 import me.pulsi_.bungeeworld.registry.WorldsRegistry;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,9 +24,12 @@ public class PlayerQuitListener implements Listener {
         
         Player p = e.getPlayer();
         String worldName = p.getWorld().getName();
+        Location quitLocation = p.getLocation();
 
         PlayerUtils playerUtils = new PlayerUtils(p);
         playerUtils.storeStatistics(worldName);
+        playerUtils.storeLastLocation(quitLocation, worldName);
+
         registry.saveAllPlayerStatistics(p);
         registry.unloadPlayerFromWorlds(p);
 

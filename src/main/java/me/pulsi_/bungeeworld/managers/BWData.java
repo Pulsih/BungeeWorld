@@ -61,9 +61,6 @@ public class BWData {
             plugin.getWorldsRegistry().loadWorlds();
 
             cmdRegisterer.registerCmds();
-
-            ItemManager.loadItems();
-            new GuiManager().loadGuis();
             return true;
         } catch (Exception e) {
             BWLogger.warn(e, "Something went wrong while reloading the plugin.");
@@ -87,7 +84,6 @@ public class BWData {
         plManager.registerEvents(new EntityDamageListener(), plugin);
         plManager.registerEvents(new EntitySpawnListener(), plugin);
         plManager.registerEvents(new ExplosionListener(), plugin);
-        plManager.registerEvents(new GuiListener(), plugin);
         plManager.registerEvents(new PlayerChatListener(), plugin);
         plManager.registerEvents(new PlayerDeathListener(), plugin);
         plManager.registerEvents(new PlayerDropListener(), plugin);

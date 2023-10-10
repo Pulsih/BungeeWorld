@@ -21,7 +21,7 @@ public class PlayerChatListener implements Listener {
         Player p = e.getPlayer();
         World world = p.getWorld();
         List<Player> newRecipientPlayers = new ArrayList<>(world.getPlayers());
-        List<String> linkedWorldsNames = new WorldReader(world.getName()).getLinkedWorlds();
+        List<String> linkedWorldsNames = new WorldReader(world.getName()).getWorld().getLinkedWorlds();
 
         if (!linkedWorldsNames.isEmpty()) {
             for (String linkedWorldName : linkedWorldsNames) {
