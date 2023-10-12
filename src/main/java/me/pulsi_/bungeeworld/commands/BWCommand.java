@@ -19,10 +19,10 @@ public abstract class BWCommand {
 
     public BWCommand(String... aliases) {
         this.identifier = aliases[0];
-        this.permission = "bungeeworld." + identifier;
+        this.permission = "bungeeworld." + identifier.toLowerCase();
 
         this.aliases = new String[aliases.length - 1];
-        System.arraycopy(aliases, 1, this.aliases, 0, aliases.length - 1);
+        for (int i = 1; i < aliases.length; i++) this.aliases[i - 1] = aliases[i];
     }
 
     public String getIdentifier() {

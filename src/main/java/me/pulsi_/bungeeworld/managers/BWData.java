@@ -8,9 +8,12 @@ import me.pulsi_.bungeeworld.commands.SpawnCmd;
 import me.pulsi_.bungeeworld.external.UpdateChecker;
 import me.pulsi_.bungeeworld.external.bStats;
 import me.pulsi_.bungeeworld.listeners.*;
+import me.pulsi_.bungeeworld.registry.WorldsRegistry;
 import me.pulsi_.bungeeworld.utils.BWLogger;
 import me.pulsi_.bungeeworld.utils.BWMessages;
 import me.pulsi_.bungeeworld.values.Values;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 
 public class BWData {
@@ -58,7 +61,11 @@ public class BWData {
             plugin.getConfigs().setupConfigs();
             Values.CONFIG.loadValues();
             BWMessages.loadMessages();
-            plugin.getWorldsRegistry().loadWorlds();
+
+            WorldsRegistry registry = plugin.getWorldsRegistry();
+            registry.loadWorlds();
+
+            for (Player p : Bukkit.getOnlinePlayers()) registry.loadAllPlayerStatistics(p);
 
             cmdRegisterer.registerCmds();
             return true;

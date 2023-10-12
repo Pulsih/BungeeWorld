@@ -2,6 +2,7 @@ package me.pulsi_.bungeeworld.external;
 
 import me.pulsi_.bungeeworld.BungeeWorld;
 import me.pulsi_.bungeeworld.utils.BWChat;
+import me.pulsi_.bungeeworld.utils.BWJson;
 import me.pulsi_.bungeeworld.values.Values;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -40,15 +41,17 @@ public class UpdateChecker implements Listener {
         Player p = e.getPlayer();
         if (!Values.CONFIG.isUpdateChecker() || (!p.isOp() && !p.hasPermission("bungeeworld.admin")) || isUpToDate) return;
 
-        TextComponent text = new TextComponent(BWChat.color("&2&lBungee&a&lWorld &aNew update available! "));
-        TextComponent button = new TextComponent(BWChat.color("&b&l[CLICK HERE]"));
-        button.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/%E2%99%BB%EF%B8%8F-bungeeworld-multiple-servers-in-a-single-server.103314/"));
-        button.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click here to download it!").color(ChatColor.AQUA).create()));
-        text.addExtra(button);
+        BWJson text = new BWJson("%prefix% &aNew update available! ");
+
+        TextComponent button = new BWJson("&b&l[CLICK HERE]")
+                .setClickAction(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/%E2%99%BB%EF%B8%8F-bungeeworld-multiple-servers-in-a-single-server.103314/")
+                .setHoverAction(HoverEvent.Action.SHOW_TEXT, "Click here to download it!").getText();
+
+        text.addText(button);
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             p.sendMessage("");
-            p.spigot().sendMessage(text);
+            text.send(p);
             p.sendMessage("");
         }, 80);
     }

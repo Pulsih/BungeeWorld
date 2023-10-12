@@ -65,7 +65,7 @@ public class PlayerJoinListener implements Listener {
             if (spawn != null) p.teleport(spawn);
         }
 
-        if (Values.CONFIG.isJoinSendTitle()) BWUtils.sendTitle(p, Values.CONFIG.getJoinTitle());
+        if (Values.CONFIG.isJoinSendTitle()) BWUtils.sendTitle(p, Values.CONFIG.getJoinTitle().replace("%player%", p.getName()));
         if (Values.CONFIG.isJoinPlaySound()) BWSounds.playSound(p, Values.CONFIG.getJoinSound());
         playerUtils.joinMessage(world);
     }

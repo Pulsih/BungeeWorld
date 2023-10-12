@@ -92,7 +92,7 @@ public class SendCmd extends BWCommand {
 
     @Override
     public List<String> tabCompletion(CommandSender s, String[] args) {
-        if (args.length == 2)
+        if (args.length == 3)
             return BWArgs.getWorlds(args);
         return null;
     }

@@ -7,6 +7,7 @@ import me.pulsi_.bungeeworld.utils.BWUtils;
 import me.pulsi_.bungeeworld.values.Values;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -180,6 +181,12 @@ public class WorldsRegistry {
 
                 player.setHunger(hunger);
             }
+
+            Location lastLocation = null;
+            String configLocation = config.getString(worldName + ".last-location");
+            if (configLocation != null) lastLocation = BWUtils.getLocation(configLocation);
+
+            player.setLastLocation(lastLocation);
 
             world.getPlayers().put(p.getUniqueId(), player);
         }

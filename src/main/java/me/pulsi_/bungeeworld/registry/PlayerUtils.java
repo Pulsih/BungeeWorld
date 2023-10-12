@@ -118,7 +118,10 @@ public class PlayerUtils {
      */
     public void storeLastLocation(Location location, String worldName) {
         BWPlayer player = getBWPlayer(worldName);
-        if (player != null) player.setLastLocation(location);
+        if (player == null) return;
+
+        if (location == null) player.setLastLocation(null);
+        else player.setLastLocation(location.clone());
     }
 
     public BWPlayer getBWPlayer(String worldName) {

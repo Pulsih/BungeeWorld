@@ -13,5 +13,6 @@ public class CmdRegisterer {
         new SetHubCmd("setHub").register();
         new SetSpawnCmd("setSpawn").register();
         new TpCmd("tp", "go").register();
+        new WorldsCmd("worlds").register();
     }
 }
